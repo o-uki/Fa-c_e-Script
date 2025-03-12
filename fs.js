@@ -1,2 +1,2 @@
-console.log("Hello World!!!");
-console.log("Hello Unko!!!");
+// ソースコード
+const sourceCode = "";
