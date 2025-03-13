@@ -47,9 +47,24 @@ const faces = (file) => {
                 "parenthesisRight"
             ];
 
-            for (let i = 0; sourceCodeTokens[i] != undefined; i++) {
-                
+            let ast = [];
+
+            const astGenerate = () => {
+                let firstToken = sourceCodeTokens.shift();
+
+                if (sourceCodeTokens.length === 0) {
+                    return ast;
+                } else if (sourceCodeTokens[0][0] === parentheses[0]) {
+                    ast = ast.concat([firstToken[0]], [sourceCodeTokens]);
+                    console.log("ast", ast);
+                    astGenerate();
+                } else {
+                    ast.push(sourceCodeTokens[0][0]);
+                    astGenerate();
+                }
             }
+
+            astGenerate();
         };
 
         console.log(parsing(lexical(sourceCode)));
