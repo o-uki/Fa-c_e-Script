@@ -19,7 +19,7 @@ const faces = (file) => {
             ["binaryZero", "(-_-)"],
             ["binaryOne", "(o_o)"],
             ["print", "('O')"]
-        ]
+        ];
 
         // 字句解析関数
         const lexical = (sourceCode) => {
@@ -38,8 +38,22 @@ const faces = (file) => {
             }
 
             return sourceCodeTokens;
-        }
+        };
+
+        //　抽象構文木生成関数
+        const parsing = (sourceCodeTokens) => {
+            const parentheses = [
+                "parenthesisLeft",
+                "parenthesisRight"
+            ];
+
+            for (let i = 0; sourceCodeTokens[i] != undefined; i++) {
+                
+            }
+        };
+
+        console.log(parsing(lexical(sourceCode)));
     }
-}
+};
 
 faces("sample.faces");
