@@ -53,10 +53,11 @@ const faces = (file) => {
                 let firstToken = sourceCodeTokens.shift();
 
                 if (sourceCodeTokens.length === 0) {
+                    console.log("a", ast);
                     return ast;
                 } else if (sourceCodeTokens[0][0] === parentheses[0]) {
-                    ast = ast.concat([firstToken[0]], [sourceCodeTokens]);
-                    console.log("ast", ast);
+                    ast = ast.concat([sourceCodeTokens]);
+                    console.log(sourceCodeTokens);
                     astGenerate();
                 } else {
                     ast.push(sourceCodeTokens[0][0]);
