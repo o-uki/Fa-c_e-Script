@@ -14,11 +14,11 @@ const faces = (file) => {
             ["void", " "],
             ["void", "\r"],
             ["void", "\n"],
-            ["parenthesisLeft", "(>_)⅃"],
-            ["parenthesisRight", "L(_<)"],
             ["binaryZero", "(-_-)"],
             ["binaryOne", "(o_o)"],
-            ["print", "('O')"]
+            ["end", "L(-.<)"],
+            ["separate", "⊂(¯^¯)⊃"],
+            ["print", "('O')⅃"]
         ];
 
         // 字句解析関数
@@ -29,10 +29,11 @@ const faces = (file) => {
                 for (let j = 0; j < tokens.length; j++) {
                     if (sourceCode.substr(i, tokens[j][1].length) === tokens[j][1]) {
                         if (!(tokens[j][0] === "void")) {
-                            sourceCodeTokens.push(tokens[j]);
+                            sourceCodeTokens.push(tokens[j][0]);
                         }
 
                         i = i + tokens[j][1].length - 1;
+                        break;
                     }
                 }
             }
@@ -40,35 +41,7 @@ const faces = (file) => {
             return sourceCodeTokens;
         };
 
-        //　抽象構文木生成関数
-        const parsing = (sourceCodeTokens) => {
-            const parentheses = [
-                "parenthesisLeft",
-                "parenthesisRight"
-            ];
-
-            let ast = [];
-
-            const astGenerate = () => {
-                let firstToken = sourceCodeTokens.shift();
-
-                if (sourceCodeTokens.length === 0) {
-                    console.log("a", ast);
-                    return ast;
-                } else if (sourceCodeTokens[0][0] === parentheses[0]) {
-                    ast = ast.concat([sourceCodeTokens]);
-                    console.log(sourceCodeTokens);
-                    astGenerate();
-                } else {
-                    ast.push(sourceCodeTokens[0][0]);
-                    astGenerate();
-                }
-            }
-
-            astGenerate();
-        };
-
-        console.log(parsing(lexical(sourceCode)));
+        console.log(lexical(sourceCode));
     }
 };
 
