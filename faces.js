@@ -19,9 +19,12 @@ const faces = (file) => {
             ["end", "L(-.<)"],
             ["separate", "⊂(¯^¯)⊃"],
             ["add", "(>ω<)⊃"],
+            ["equal", "(>v<)⊃"],
             ["minus", "('^;)⊃"],
             ["absolute", "(O∇O)⊃"],
-            ["print", "('O')⅃"]
+            ["print", "('O')⅃"],
+            ["if", "(°^°)⅃"],
+            ["for", "(°д°)⅃"]
         ];
 
         // 演算子を認識して演算する関数
@@ -29,11 +32,18 @@ const faces = (file) => {
             ["add", 2, (operands) => {
                 return operands[0] + operands[1];
             }],
-            ["absolute", 1, (operands) => {
-                return Math.abs(operands[0]);
+            ["equal", 2, (operands) => {
+                if (operands[0] === operands[1]) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             }],
             ["minus", 1, (operands) => {
                 return -operands[0];
+            }],
+            ["absolute", 1, (operands) => {
+                return Math.abs(operands[0]);
             }]
         ];
 
@@ -128,6 +138,17 @@ const faces = (file) => {
                 }
             }
         })();
+
+        // 条件分岐と繰り返し文の処理
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].command === "if") {
+                if (commands[i].arguments[0] > 0) {
+                    
+                } else {
+                    
+                }
+            }
+        }
 
         console.log(commands);
     }
