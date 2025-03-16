@@ -23,9 +23,15 @@ const faces = (file) => {
             ["minus", "('^;)⊃"],
             ["absolute", "(O∇O)⊃"],
             ["print", "('O')⅃"],
-            ["if", "(°^°)⅃"],
-            ["for", "(°д°)⅃"]
+            ["if", "(¯^°)⅃"],
+            ["for", "(°д°)⅃"],
+            ["variableDeclare", "(°∇°)⅃"],
+            ["variableDefine", "('∇')⅃"],
+            ["variableGet", "('ω')⊃"]
         ];
+
+        // 変数の配列
+        let variables = [];
 
         // 演算子を認識して演算する関数
         const operators = [
@@ -44,6 +50,13 @@ const faces = (file) => {
             }],
             ["absolute", 1, (operands) => {
                 return Math.abs(operands[0]);
+            }],
+            ["variableGet", 1, (operands) => {
+                for (let i = 0; i < variables.length; i++) {
+                    if (operands[0] === variables[i][0]) {
+                        return variables[i][1];
+                    }
+                }
             }]
         ];
 
@@ -80,22 +93,23 @@ const faces = (file) => {
             };
             let binaryBits = [];
             
-            let operatorIndex = [null, null];
-            let operate = null;
+            let operatorIndex = [];
+            let operateType = [];
 
             // 演算子があると演算する
             const operatedValueGet = () => {
                 const operatedValue = (() => {
-                    if (operatorIndex[1] != null) {
-                        operatorIndex[0]--;
-                        if (operatorIndex[0] === 0) {
+                    if (operatorIndex.length) {
+                        operatorIndex.slice(-1)[0][0]--;
+                        if (operatorIndex.slice(-1)[0][0] === 0) {
                             let operands = [];
     
-                            for (let i = 0; i < operatorIndex[1]; i++) {
+                            for (let i = 0; i < operatorIndex.slice(-1)[0][1]; i++) {
                                 operands.push(commands[commands.length - 1].arguments.pop());
                             }
-    
-                            return operate(operands);
+
+                            operatorIndex.pop();
+                            return operateType.slice(-1)[0](operands);
                         }
                     }
                 })();
@@ -103,12 +117,15 @@ const faces = (file) => {
                 if (operatedValue != undefined) {
                     commands[commands.length - 1].arguments.push(operatedValue);
 
-                    operatorIndex = [null, null];
-                    operate = null;
+                    operateType.pop();
+
+                    return true;
+                } else {
+                    return false;
                 }
             };
 
-            for (let i = 0; i < tokenNames.length; i++) {
+            for (let i = 0; i < tokenNames.length; i++) { // 命令を一つずつ引数と一緒にまとめていく
                 if (commandArgument.command === "") {
                     commandArgument.command = tokenNames[i];
                     commands.push(structuredClone(commandArgument));
@@ -118,17 +135,28 @@ const faces = (file) => {
                     } else if (tokenNames[i] === "binaryOne") {
                         binaryBits.push("1");
                     } else { // 演算子と区切りと終了を処理
-                        if (tokenNames[i] === "end") {
+                        if (tokenNames[i] === "end") { // 終了があるとそこまでの値を命令の引数に追加
                             commands.slice(-1)[0].arguments.push(Number("0b" + binaryBits.join("")));
                             binaryBits = [];
                             commandArgument.command = "";
 
                             operatedValueGet();
-                        } else if (tokenNames[i] != "separate") {
-                            operatorIndex[0] = operateData(tokenNames[i])[0];
-                            operatorIndex[1] = operateData(tokenNames[i])[0];
-                            operate = operateData(tokenNames[i])[1];
-                        } else {
+
+                            if (commands.slice(-1)[0].command === "variableDeclare") {
+                                variables.push([commands.slice(-1)[0].arguments[0], commands.slice(-1)[0].arguments[1]]);
+                            } else if (commands.slice(-1)[0].command === "variableDefine") {
+                                for (let j = 0; j < variables.length; j++) {
+                                    if (commands.slice(-1)[0].arguments[0] === variables[j][0]) {
+                                        variables[j][1] = commands.slice(-1)[0].arguments[1];
+                                    }
+                                }
+                            }
+
+                            console.log(commands);
+                        } else if (tokenNames[i] != "separate") { // 演算子があると演算のための情報を定義
+                            operatorIndex.push([operateData(tokenNames[i])[0], operateData(tokenNames[i])[0]]);
+                            operateType.push(operateData(tokenNames[i])[1]);
+                        } else { // 区切りがあるとそこまでの値を命令の引数に追加
                             commands.slice(-1)[0].arguments.push(Number("0b" + binaryBits.join("")));
                             binaryBits = [];
                             
@@ -139,18 +167,43 @@ const faces = (file) => {
             }
         })();
 
-        // 条件分岐と繰り返し文の処理
+        // 条件分岐と繰り返し文の処理、変数の命令はもうしてあるので削除
         for (let i = 0; i < commands.length; i++) {
-            if (commands[i].command === "if") {
-                if (commands[i].arguments[0] > 0) {
-                    
-                } else {
-                    
+            if (commands[i].command === "if") { // 条件分岐
+                if (commands[i].arguments[0] > 0) { // 真なら
+                    commands.splice(i, 1);
+                    i--;
+                } else { // 偽なら
+                    commands.splice(i, 1 + commands[i].arguments[1]);
+                    i = i - 1 - commands[i].arguments[1];
                 }
+            } else if (commands[i].command === "for") { // 繰り返し
+                const loopRange = commands[i].arguments[0];
+                const loopCommands = commands.slice(i + 1, i + commands[i].arguments[1] + 1);
+
+                commands.splice(i, 1);
+
+                // 命令を繰り返して追加
+                for (let j = 0; j < loopRange - 1; j++) {
+                    commands.splice(i + loopCommands.length * (j + 1), 0, ...loopCommands);
+                }
+
+                i--;
+            } else if (commands[i].command === "variableDeclare" || commands[i].command === "variableDefine") {
+                commands.splice(i, 1);
+                i--;
             }
         }
 
-        console.log(commands);
+        // 順番に命令を実行
+        for (let i = 0; i < commands.length; i++) {
+            const commandName = commands[i].command;
+            const commandArguments = commands[i].arguments;
+
+            if (commandName === "print") {
+                console.log(...commandArguments);
+            }
+        }
     }
 };
 
