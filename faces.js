@@ -87,85 +87,50 @@ const faces = (file) => {
         let commands = [];
 
         (() => {
-            let commandArgument = {
+            let commandTemplate = {
                 command: "",
                 arguments: []
             };
             let binaryBits = [];
             
-            let operatorIndex = [];
-            let operateType = [];
-
-            // 演算子があると演算する
-            const operatedValueGet = () => {
-                const operatedValue = (() => {
-                    if (operatorIndex.length) {
-                        operatorIndex.slice(-1)[0][0]--;
-                        if (operatorIndex.slice(-1)[0][0] === 0) {
-                            let operands = [];
-    
-                            for (let i = 0; i < operatorIndex.slice(-1)[0][1]; i++) {
-                                operands.push(commands[commands.length - 1].arguments.pop());
-                            }
-
-                            operatorIndex.pop();
-                            return operateType.slice(-1)[0](operands);
-                        }
-                    }
-                })();
-
-                if (operatedValue != undefined) {
-                    commands[commands.length - 1].arguments.push(operatedValue);
-
-                    operateType.pop();
-
-                    return true;
-                } else {
-                    return false;
-                }
-            };
+            let commandOperators = [];
 
             for (let i = 0; i < tokenNames.length; i++) { // 命令を一つずつ引数と一緒にまとめていく
-                if (commandArgument.command === "") {
-                    commandArgument.command = tokenNames[i];
-                    commands.push(structuredClone(commandArgument));
+                if (commandTemplate.command === "") {
+                    commandTemplate.command = tokenNames[i];
+                    commands.push(structuredClone(commandTemplate));
                 } else {
                     if (tokenNames[i] === "binaryZero") { // 二進数を数値に変換
                         binaryBits.push("0");
                     } else if (tokenNames[i] === "binaryOne") {
                         binaryBits.push("1");
                     } else { // 演算子と区切りと終了を処理
-                        if (tokenNames[i] === "end") { // 終了があるとそこまでの値を命令の引数に追加
-                            commands.slice(-1)[0].arguments.push(Number("0b" + binaryBits.join("")));
+                        if (tokenNames[i] === "end" || tokenNames[i] === "separate") { // 終了、区切り
+                            commands.slice(-1)[0].arguments.push(structuredClone(commandOperators.concat([Number("0b" + binaryBits.join(""))])));
+
                             binaryBits = [];
-                            commandArgument.command = "";
+                            commandOperators = [];
 
-                            operatedValueGet();
+                            if (tokenNames[i] === "end") {
+                                for (let j = commands.slice(-1)[0].arguments.length - 1; j >= 0; j--) {
+                                    
+                                }
 
-                            if (commands.slice(-1)[0].command === "variableDeclare") {
-                                variables.push([commands.slice(-1)[0].arguments[0], commands.slice(-1)[0].arguments[1]]);
-                            } else if (commands.slice(-1)[0].command === "variableDefine") {
-                                for (let j = 0; j < variables.length; j++) {
-                                    if (commands.slice(-1)[0].arguments[0] === variables[j][0]) {
-                                        variables[j][1] = commands.slice(-1)[0].arguments[1];
-                                    }
+                                commandTemplate.command = "";
+                            }
+                        } else  { // 演算子
+                            for (let j = 0; j < operators.length; j++) {
+                                if (tokenNames[i] === operators[j][0]) {
+                                    commandOperators.push(j);
                                 }
                             }
-
-                            console.log(commands);
-                        } else if (tokenNames[i] != "separate") { // 演算子があると演算のための情報を定義
-                            operatorIndex.push([operateData(tokenNames[i])[0], operateData(tokenNames[i])[0]]);
-                            operateType.push(operateData(tokenNames[i])[1]);
-                        } else { // 区切りがあるとそこまでの値を命令の引数に追加
-                            commands.slice(-1)[0].arguments.push(Number("0b" + binaryBits.join("")));
-                            binaryBits = [];
-                            
-                            operatedValueGet();
                         }
                     }
                 }
             }
         })();
+
+        console.log(commands, commands.slice(-2)[0].arguments, commands.slice(-1)[0].arguments);
 
         // 条件分岐と繰り返し文の処理、変数の命令はもうしてあるので削除
         for (let i = 0; i < commands.length; i++) {
@@ -200,9 +165,9 @@ const faces = (file) => {
             const commandName = commands[i].command;
             const commandArguments = commands[i].arguments;
 
-            if (commandName === "print") {
-                console.log(...commandArguments);
-            }
+            // if (commandName === "print") {
+            //     console.log(...commandArguments);
+            // }
         }
     }
 };
