@@ -60,14 +60,6 @@ const faces = (file) => {
             }]
         ];
 
-        const operateData = (operator) => {
-            for (let i = 0; i < operators.length; i++) {
-                if (operator === operators[i][0]) {
-                    return [operators[i][1], operators[i][2]];
-                }
-            }
-        };
-
         // 字句解析してトークンの名前を並べる
         const tokenNames = [];
 
@@ -112,10 +104,6 @@ const faces = (file) => {
                             commandOperators = [];
 
                             if (tokenNames[i] === "end") {
-                                for (let j = commands.slice(-1)[0].arguments.length - 1; j >= 0; j--) {
-                                    
-                                }
-
                                 commandTemplate.command = "";
                             }
                         } else  { // 演算子
@@ -130,44 +118,78 @@ const faces = (file) => {
             }
         })();
 
-        console.log(commands, commands.slice(-2)[0].arguments, commands.slice(-1)[0].arguments);
+        // 演算子の処理する関数
+        const argumentOperate = (i) => {
+            const commandName = commands[i].command;
+            let  commandArguments = commands[i].arguments;
+
+            for (let j = commandArguments.length - 1; j >= 0; j--) {
+                if (commandArguments[j].length > 1) {
+                    let operands = [];
+                    let operator = operators[commandArguments[j].slice(-2)[0]];
+
+                    for (let k = 0; k < operator[1]; k++) {
+                        operands.push(commandArguments[j + k].slice(-1)[0]);
+                    }
+
+                    commandArguments[j][commandArguments[j].length - 1] = operator[2](operands);
+                    commandArguments[j].splice(-2, 1);
+                    commandArguments.splice(j + 1, operator[1] - 1);
+                    j = commandArguments.length;
+                }
+            }
+
+            commands[i].arguments = [].concat(...commands[i].arguments);
+            commandArguments = commands[i].arguments;
+
+            return [commandName, commandArguments];
+        }
 
         // 条件分岐と繰り返し文の処理、変数の命令はもうしてあるので削除
         for (let i = 0; i < commands.length; i++) {
             if (commands[i].command === "if") { // 条件分岐
-                if (commands[i].arguments[0] > 0) { // 真なら
+                const commandArguments = argumentOperate(i)[1];
+
+                if (commandArguments[0] > 0) { // 真なら
                     commands.splice(i, 1);
                     i--;
                 } else { // 偽なら
-                    commands.splice(i, 1 + commands[i].arguments[1]);
-                    i = i - 1 - commands[i].arguments[1];
+                    commands.splice(i, 1 + commandArguments[1]);
+                    i = i - 1 - commandArguments[1];
                 }
             } else if (commands[i].command === "for") { // 繰り返し
-                const loopRange = commands[i].arguments[0];
-                const loopCommands = commands.slice(i + 1, i + commands[i].arguments[1] + 1);
+                const commandArguments = argumentOperate(i)[1];
+
+                const loopRange = commandArguments[0];
+                const loopCommands = commands.slice(i + 1, i + commandArguments[1] + 1);
 
                 commands.splice(i, 1);
 
                 // 命令を繰り返して追加
                 for (let j = 0; j < loopRange - 1; j++) {
-                    commands.splice(i + loopCommands.length * (j + 1), 0, ...loopCommands);
+                    commands.splice(i + loopCommands.length * (j + 1), 0, ...structuredClone(loopCommands));
                 }
 
-                i--;
-            } else if (commands[i].command === "variableDeclare" || commands[i].command === "variableDefine") {
-                commands.splice(i, 1);
                 i--;
             }
         }
 
         // 順番に命令を実行
         for (let i = 0; i < commands.length; i++) {
-            const commandName = commands[i].command;
-            const commandArguments = commands[i].arguments;
+            const commandName = argumentOperate(i)[0];
+            const commandArguments = argumentOperate(i)[1];
 
-            // if (commandName === "print") {
-            //     console.log(...commandArguments);
-            // }
+            if (commandName === "print") {
+                console.log(...commandArguments);
+            } else if (commandName === "variableDeclare") {
+                variables.push([commandArguments[0], commandArguments[1]]);
+            } else if (commandName === "variableDefine") {
+                for (let j = 0; j < variables.length; j++) {
+                    if (commandArguments[0] === variables[j][0]) {
+                        variables[j][1] = commandArguments[1];
+                    }
+                }
+            }
         }
     }
 };
