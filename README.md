@@ -3,11 +3,32 @@
 
 Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコードを記述するプログラミング言語です。
 
-Fa(c_e)Scriptを実行するには、Node.jsの実行環境が必要です。
-***
+## 実行まで
+**Fa(c_e)Scriptを実行するには、Node.jsの実行環境が必要です。**
+
+### 1. ディレクトリを作成
+好きな名前でディレクトリを作成します。その中に、リポジトリ内のJavaScriptファイル`faces.js`と、
+好きな名前の空のJavaScriptファイル`<fileName>.js`、ここでは例として`sample.js`を置きます。
+
+### 2. Fa(c_e)Scriptファイルを作成
+好きな名前のFa(c_e)Scriptファイル`<fileName>.faces`を作成します。拡張子は、`.faces`です。
+ここでは例として`sample.faces`とします。このファイルは先ほどのディレクトリ内に置きます。
+
+### 3. JavaScriptファイルを記述
+`sample.js`を記述します。`faces.js`をモジュールとして読み込み、`sample.faces`を実行するコードです。
+
+`sample.js`:
+```
+let faces = require("./faces");
+
+faces("sample.faces");
+```
+
+ここまで完了したら、Fa(c_e)Scriptを実行する準備が整いました。
+`sample.faces`内にFa(c_e)Scriptを記述して、Node.jsで`sample.js`を実行します。
 
 ## 1. 値
-値は、`(o_o)`を1、`(-_-)`を0とする二進数で表されます。
+値は、`(o_o)`を1、`(-_-)`を0とする二進数で表します。
 ```
 (-_-)
 (o_o)
