@@ -21,7 +21,7 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 ```
 let faces = require("./faces");
 
-faces("sample.faces");
+faces("./sample.faces");
 ```
 
 ここまで完了したら、Fa(c_e)Scriptを実行する準備が整いました。
