@@ -18,7 +18,10 @@ const faces = (file) => {
             ["binaryOne", "(o_o)"],
             ["end", "L(-.<)"],
             ["separate", "⊂(¯^¯)⊃"],
-            ["add", "(>ω<)⊃"],
+            ["add", "(^ω^)⊃"],
+            ["subtract", "(-ε-)⊃"],
+            ["times", "(>ω<)⊃"],
+            ["divided", "(TεT)⊃"],
             ["equal", "(>v<)⊃"],
             ["minus", "('^;)⊃"],
             ["absolute", "(O∇O)⊃"],
@@ -37,6 +40,15 @@ const faces = (file) => {
         const operators = [
             ["add", 2, (operands) => {
                 return operands[0] + operands[1];
+            }],
+            ["subtract", 2, (operands) => {
+                return operands[0] - operands[1];
+            }],
+            ["times", 2, (operands) => {
+                return operands[0] * operands[1];
+            }],
+            ["divided", 2, (operands) => {
+                return operands[0] / operands[1];
             }],
             ["equal", 2, (operands) => {
                 if (operands[0] === operands[1]) {
