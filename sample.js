@@ -1,3 +1,3 @@
 let faces = require("./faces");
 
-faces("sample.faces");
+faces("./sample.faces");
