@@ -1,6 +1,7 @@
 # Fa(c_e)Script
+![faces_logo](./images/faces_full_logo_background.png "faces_logo")
+
 Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコードを記述するプログラミング言語です。
-![faces_logo](./images/faces_logo_background.png "faces_logo")
 
 ## 1. 値
 値は、`(o_o)`を1、`(-_-)`を0とする二進数で表されます。
