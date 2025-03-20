@@ -22,7 +22,12 @@ const faces = (file) => {
             ["subtract", "(-ε-)⊃"],
             ["times", "(>ω<)⊃"],
             ["divided", "(TεT)⊃"],
-            ["equal", "(>v<)⊃"],
+            ["equal", "(>_<)⊃"],
+            ["moreEqual", "(>_O)⊃"],
+            ["lessEqual", "(O_<)⊃"],
+            ["more", "(>xO)⊃"],
+            ["less", "(Ox<)⊃"],
+            ["trueFalseInversion", "(.^.)⊃"]
             ["minus", "('^;)⊃"],
             ["absolute", "(O∇O)⊃"],
             ["print", "('O')⅃"],
@@ -55,6 +60,41 @@ const faces = (file) => {
                     return 1;
                 } else {
                     return 0;
+                }
+            }],
+            ["moreEqual", 2, (operands) => {
+                if (operands[0] >= operands[1]) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }],
+            ["lessEqual", 2, (operands) => {
+                if (operands[0] <= operands[1]) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }],
+            ["more", 2, (operands) => {
+                if (operands[0] > operands[1]) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }],
+            ["less", 2, (operands) => {
+                if (operands[0] < operands[1]) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }],
+            ["trueFalseInversion", 1, (operands) => {
+                if (operands[0] > 0) {
+                    return 0;
+                } else {
+                    return 1;
                 }
             }],
             ["minus", 1, (operands) => {
