@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
+<title>Fa(c_e)Script</title>
+</head><body>
+<h1>Fa(c_e)Script</h1>
+
+<textarea id=ta_src></textare><br>
+<button id=btn_run>RUN</button>
+<textarea id=ta_output></textare><br>
+
+<script type="module">
+btnrun.onclick = () => {
+  const src = ta_src.value;
+  ta_output.value = "";
+  const outputs = [];
+  faces(src, s => outputs.push(s));
+  ta_output.value = outputs.join("\n");
+};
+</script>

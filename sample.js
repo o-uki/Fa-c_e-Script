@@ -1,3 +1,6 @@
-let faces = require("./faces");
+import faces from "./faces.js";
+import fs from "fs";
 
-faces("./sample.faces");
+const fn = process.argv[2] ?? "./sample.faces";
+const src = fs.readFileSync(fn, "utf-8");
+faces(src);

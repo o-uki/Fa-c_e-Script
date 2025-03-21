@@ -4,7 +4,7 @@
 Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコードを記述するプログラミング言語です。
 
 ## 実行までの手順
-**Fa(c_e)Scriptを実行するには、Node.jsの実行環境が必要です。**
+**Fa(c_e)Scriptを実行するには、Node.jsまたはDenoの実行環境が必要です。**
 
 ### 1. ディレクトリを作成
 好きな名前でディレクトリを作成します。その中に、リポジトリ内のJavaScriptファイル`faces.js`と、
@@ -14,18 +14,49 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 好きな名前のFa(c_e)Scriptファイル`<fileName>.faces`を作成します。拡張子は、`.faces`です。
 ここでは例として`sample.faces`とします。このファイルは先ほどのディレクトリ内に置きます。
 
-### 3. JavaScriptファイルを記述
+### 3. コンソールで実行
+Node.jsを使う場合
+```sh
+node sample.js sample.faces
+```
+
+Denoを使う場合
+```sh
+deno  --allow-read sample.deno.js sample.faces
+```
+
+### 4. JavaScriptファイルでの実行 (Node.js)
 `sample.js`を記述します。`faces.js`をモジュールとして読み込み、`sample.faces`を実行するコードです。
 
 `sample.js`:
 ```
-let faces = require("./faces");
+import faces from "./faces.js";
+import fs from "fs";
 
-faces("./sample.faces");
+const src = fs.readFileSync("./sample.faces", "utf-8");
+faces(src);
 ```
 
-ここまで完了したら、Fa(c_e)Scriptを実行する準備が整いました。
-`sample.faces`内にFa(c_e)Scriptを記述して、Node.jsで`sample.js`を実行します。
+Node.jsで`sample.js`を実行します。
+```sh
+node sample.js
+```
+
+### 5. JavaScriptファイルでの実行 (Deno)
+`sample.deno.js`を記述します。`faces.js`をモジュールとして読み込み、`sample.faces`を実行するコードです。
+
+`sample.deno.js`:
+```
+import faces from "./faces.js";
+
+const src = await Deno.readTextFile("./sample.faces");
+faces(src);
+```
+
+Denoで`sample.deno.js`を実行します。
+```sh
+deno --allow-read sample.deno.js
+```
 
 ## 1. 値
 値は、`(o_o)`を1、`(-_-)`を0とする二進数で表します。

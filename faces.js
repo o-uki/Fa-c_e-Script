@@ -1,15 +1,6 @@
-// モジュール読み込み
-const path = require("path");
-const fs = require("fs");
 
 // Fa(c_e)Script実行関数
-module.exports = (file) => {
-    (() => {
-        // ファイル読み込み
-        if (path.extname(file) === ".faces") {
-            //　ソースコード
-            const sourceCode = fs.readFileSync(file, "utf-8");
-
+export default (sourceCode) => {
             //　トークンの配列
             const tokens = [
                 ["void", " "],
@@ -244,6 +235,4 @@ module.exports = (file) => {
                     }
                 }
             }
-        }
-    })();
-}
+};
