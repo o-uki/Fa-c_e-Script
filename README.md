@@ -8,7 +8,7 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 
 ### 1. ブラウザで実行
 ブラウザで下記のページを開き、Fa(c_e)Scriptを記述し、「RUN」ボタンを押します
-- [Fa(c_e)Script Playground](https://taisukef.github.io/fa-c_e_script/)
+- [Fa(c_e)Script Playground](https://taisukef.github.io/Fa-c_e-Script/)
 
 ### 2. コンソールで実行
 好きな名前のFa(c_e)Scriptファイル`<fileName>.faces`を作成します。拡張子は、`.faces`です。
