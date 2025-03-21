@@ -31,6 +31,8 @@ module.exports = (file) => {
                 ["trueFalseInversion", "(.^.)⊃"],
                 ["minus", "('^;)⊃"],
                 ["absolute", "(O∇O)⊃"],
+                ["unicode", "(◕-◕)⊃"],
+                ["join", "(>◡<)⊃"],
                 ["print", "('O')⅃"],
                 ["if", "(¯^°)⅃"],
                 ["for", "(°д°)⅃"],
@@ -45,7 +47,9 @@ module.exports = (file) => {
             // 演算子を認識して演算する関数
             const operators = [
                 ["add", 2, (operands) => {
-                    return operands[0] + operands[1];
+                    if (typeof operands[0] === "number" && typeof operands[1] === "number") {
+                        return operands[0] + operands[1];
+                    }
                 }],
                 ["subtract", 2, (operands) => {
                     return operands[0] - operands[1];
@@ -103,6 +107,18 @@ module.exports = (file) => {
                 }],
                 ["absolute", 1, (operands) => {
                     return Math.abs(operands[0]);
+                }],
+                ["unicode", 1, (operands) => {
+                    return String.fromCharCode(operands[0]);
+                }],
+                ["join", 2, (operands) => {
+                    let joinedValue = operands.slice(0, 2).join("");
+
+                    if (isNaN(Number(joinedValue))) {
+                        return joinedValue;
+                    } else {
+                        return Number(joinedValue);
+                    }
                 }],
                 ["variableGet", 1, (operands) => {
                     for (let i = 0; i < variables.length; i++) {
@@ -181,14 +197,16 @@ module.exports = (file) => {
                         let operands = [];
                         let operator = operators[commandArguments[j].slice(-2)[0]];
 
-                        for (let k = 0; k < operator[1]; k++) {
-                            operands.push(commandArguments[j + k].slice(-1)[0]);
+                        if (typeof operator != "undefined") {
+                            for (let k = 0; k < operator[1]; k++) {
+                                operands.push(commandArguments[j + k].slice(-1)[0]);
+                            }
+    
+                            commandArguments[j][commandArguments[j].length - 1] = operator[2](operands);
+                            commandArguments[j].splice(-2, 1);
+                            commandArguments.splice(j + 1, operator[1] - 1);
+                            j = commandArguments.length;
                         }
-
-                        commandArguments[j][commandArguments[j].length - 1] = operator[2](operands);
-                        commandArguments[j].splice(-2, 1);
-                        commandArguments.splice(j + 1, operator[1] - 1);
-                        j = commandArguments.length;
                     }
                 }
 
@@ -200,30 +218,32 @@ module.exports = (file) => {
 
             // 条件分岐と繰り返し文の処理、変数の命令はもうしてあるので削除
             for (let i = 0; i < commands.length; i++) {
-                if (commands[i].command === "if") { // 条件分岐
-                    const commandArguments = argumentOperate(i)[1];
-
-                    if (commandArguments[0] > 0) { // 真なら
+                if (typeof commands != "undefined") {
+                    if (commands[i].command === "if") { // 条件分岐
+                        const commandArguments = argumentOperate(i)[1];
+    
+                        if (commandArguments[0] > 0) { // 真なら
+                            commands.splice(i, 1);
+                            i--;
+                        } else { // 偽なら
+                            commands.splice(i, 1 + commandArguments[1]);
+                            i = i - 1 - commandArguments[1];
+                        }
+                    } else if (commands[i].command === "for") { // 繰り返し
+                        const commandArguments = argumentOperate(i)[1];
+    
+                        const loopRange = commandArguments[0];
+                        const loopCommands = commands.slice(i + 1, i + commandArguments[1] + 1);
+    
                         commands.splice(i, 1);
+    
+                        // 命令を繰り返して追加
+                        for (let j = 0; j < loopRange - 1; j++) {
+                            commands.splice(i + loopCommands.length * (j + 1), 0, ...structuredClone(loopCommands));
+                        }
+    
                         i--;
-                    } else { // 偽なら
-                        commands.splice(i, 1 + commandArguments[1]);
-                        i = i - 1 - commandArguments[1];
                     }
-                } else if (commands[i].command === "for") { // 繰り返し
-                    const commandArguments = argumentOperate(i)[1];
-
-                    const loopRange = commandArguments[0];
-                    const loopCommands = commands.slice(i + 1, i + commandArguments[1] + 1);
-
-                    commands.splice(i, 1);
-
-                    // 命令を繰り返して追加
-                    for (let j = 0; j < loopRange - 1; j++) {
-                        commands.splice(i + loopCommands.length * (j + 1), 0, ...structuredClone(loopCommands));
-                    }
-
-                    i--;
                 }
             }
 
