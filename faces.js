@@ -1,6 +1,5 @@
-
 // Fa(c_e)Script実行関数
-export default (sourceCode) => {
+export default (sourceCode, callbackoutput = console.log) => {
             //　トークンの配列
             const tokens = [
                 ["void", " "],
@@ -224,7 +223,7 @@ export default (sourceCode) => {
                 const commandArguments = argumentOperate(i)[1];
 
                 if (commandName === "print") {
-                    console.log(...commandArguments);
+                    callbackoutput(...commandArguments);
                 } else if (commandName === "variableDeclare") {
                     variables.push([commandArguments[0], commandArguments[1]]);
                 } else if (commandName === "variableDefine") {
