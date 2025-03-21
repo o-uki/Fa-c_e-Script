@@ -129,18 +129,39 @@ module.exports = (file) => {
                 }]
             ];
 
+            // エラーの配列とエラーの処理をする関数
+            let errors = [
+                ["syntax", "(#ˋзˊ)੭"],
+                ["operator", "(;°~°)∂"],
+                ["command", "(ˊ•ω•)৴"]
+            ]
+
+            const getError = (errorType) => {
+                for (let i = 0; i < errors.length; i++) {
+                    if (errorType === errors[i][0]) {
+                        console.log('\u001b[31m' + errors[i][1]);
+                        process.exit(1);
+                    }
+                }
+            }
+
             // 字句解析してトークンの名前を並べる
             const tokenNames = [];
 
             for (let i = 0; i < sourceCode.length; i++) {
+                let isToken = false;
                 for (let j = 0; j < tokens.length; j++) {
                     if (sourceCode.substring(i, i + tokens[j][1].length) === tokens[j][1]) {
+                        isToken = true;
                         if (!(tokens[j][0] === "void")) {
                             tokenNames.push(tokens[j][0]);
                         }
 
                         i = i + tokens[j][1].length - 1;
                     }
+                }
+                if (!(isToken)) {
+                    getError("syntax");
                 }
             }
 
@@ -199,6 +220,9 @@ module.exports = (file) => {
 
                         if (typeof operator != "undefined") {
                             for (let k = 0; k < operator[1]; k++) {
+                                if (typeof commandArguments[j + k] === "undefined") {
+                                    getError("operator");
+                                }
                                 operands.push(commandArguments[j + k].slice(-1)[0]);
                             }
     
@@ -216,11 +240,19 @@ module.exports = (file) => {
                 return [commandName, commandArguments];
             }
 
+            // 引数の指定が足りなかったらエラーを吐く関数
+            const argumentGetError = (arguments, number) => {
+                if (arguments.length != number) {
+                    getError("command");
+                }
+            }
+
             // 条件分岐と繰り返し文の処理、変数の命令はもうしてあるので削除
             for (let i = 0; i < commands.length; i++) {
-                if (typeof commands != "undefined") {
+                if (typeof commands[i] != "undefined") {
                     if (commands[i].command === "if") { // 条件分岐
                         const commandArguments = argumentOperate(i)[1];
+                        argumentGetError(commandArguments, 2);
     
                         if (commandArguments[0] > 0) { // 真なら
                             commands.splice(i, 1);
@@ -231,6 +263,7 @@ module.exports = (file) => {
                         }
                     } else if (commands[i].command === "for") { // 繰り返し
                         const commandArguments = argumentOperate(i)[1];
+                        argumentGetError(commandArguments, 2);
     
                         const loopRange = commandArguments[0];
                         const loopCommands = commands.slice(i + 1, i + commandArguments[1] + 1);
@@ -255,8 +288,10 @@ module.exports = (file) => {
                 if (commandName === "print") {
                     console.log(...commandArguments);
                 } else if (commandName === "variableDeclare") {
+                    argumentGetError(commandArguments, 2);
                     variables.push([commandArguments[0], commandArguments[1]]);
                 } else if (commandName === "variableDefine") {
+                    argumentGetError(commandArguments, 2);
                     for (let j = 0; j < variables.length; j++) {
                         if (commandArguments[0] === variables[j][0]) {
                             variables[j][1] = commandArguments[1];
