@@ -4,7 +4,11 @@
 Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコードを記述するプログラミング言語です。
 
 ## 実行までの手順
-**Fa(c_e)Scriptを実行するには、Node.jsまたはDenoの実行環境が必要です。**
+**Fa(c_e)Scriptを実行するには、ブラウザ、Node.jsまたはDenoの実行環境が必要です。**
+
+### 1. ブラウザで実行
+ブラウザで下記のページを開き、Fa(c_e)Scriptを記述し、「RUN」ボタンを押します
+- [Fa(c_e)Script Playground](https://taisukef.github.io/fa-c_e_script/)
 
 ### 1. ディレクトリを作成
 好きな名前でディレクトリを作成します。その中に、リポジトリ内のJavaScriptファイル`faces.js`と、

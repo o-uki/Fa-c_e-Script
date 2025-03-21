@@ -1,14 +1,23 @@
 <!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
-<title>Fa(c_e)Script</title>
+<title>Fa(c_e)Script Playground</title>
 </head><body>
-<h1>Fa(c_e)Script</h1>
+<h1>Fa(c_e)Script Playground</h1>
 
-<textarea id=ta_src></textare><br>
-<button id=btn_run>RUN</button>
-<textarea id=ta_output></textare><br>
+<textarea id=ta_src></textarea><br>
+<button id=btn_run>RUN</button><br>
+<textarea id=ta_output></textarea><br>
 
 <script type="module">
-btnrun.onclick = () => {
+import faces from "./faces.js";
+
+const sample = `(°∇°)⅃(-_-)⊂(¯^¯)⊃(-_-)L(-.<)
+(°д°)⅃(o_o)(o_o)(o_o)⊂(¯^¯)⊃(o_o)(-_-)L(-.<)
+('∇')⅃(-_-)⊂(¯^¯)⊃(^ω^)⊃('ω')⊃(-_-)⊂(¯^¯)⊃(o_o)L(-.<)
+('O')⅃('ω')⊃(-_-)L(-.<)`;
+
+ta_src.value = sample;
+
+btn_run.onclick = () => {
   const src = ta_src.value;
   ta_output.value = "";
   const outputs = [];
@@ -16,3 +25,13 @@ btnrun.onclick = () => {
   ta_output.value = outputs.join("\n");
 };
 </script>
+
+<style>
+textarea {
+  width: 80vw;
+  height: 9em;
+}
+button {
+  margin: 1em 0;
+}
+</style>
