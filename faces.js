@@ -1,15 +1,5 @@
-// モジュール読み込み
-const path = require("path");
-const fs = require("fs");
-
 // Fa(c_e)Script実行関数
-module.exports = (file) => {
-    (() => {
-        // ファイル読み込み
-        if (path.extname(file) === ".faces") {
-            //　ソースコード
-            const sourceCode = fs.readFileSync(file, "utf-8");
-
+export default (sourceCode, callbackoutput = console.log) => {
             //　トークンの配列
             const tokens = [
                 ["void", " "],
@@ -286,7 +276,7 @@ module.exports = (file) => {
                 const commandArguments = argumentOperate(i)[1];
 
                 if (commandName === "print") {
-                    console.log(...commandArguments);
+                    callbackoutput(...commandArguments);
                 } else if (commandName === "variableDeclare") {
                     argumentGetError(commandArguments, 2);
                     variables.push([commandArguments[0], commandArguments[1]]);
@@ -299,6 +289,4 @@ module.exports = (file) => {
                     }
                 }
             }
-        }
-    })();
-}
+};
