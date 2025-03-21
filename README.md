@@ -10,56 +10,45 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 ブラウザで下記のページを開き、Fa(c_e)Scriptを記述し、「RUN」ボタンを押します
 - [Fa(c_e)Script Playground](https://taisukef.github.io/fa-c_e_script/)
 
-### 1. ディレクトリを作成
-好きな名前でディレクトリを作成します。その中に、リポジトリ内のJavaScriptファイル`faces.js`と、
-好きな名前の空のJavaScriptファイル`<fileName>.js`、ここでは例として`sample.js`を置きます。
-
-### 2. Fa(c_e)Scriptファイルを作成
+###　2. コンソールで実行
 好きな名前のFa(c_e)Scriptファイル`<fileName>.faces`を作成します。拡張子は、`.faces`です。
 ここでは例として`sample.faces`とします。このファイルは先ほどのディレクトリ内に置きます。
 
-### 3. コンソールで実行
-Node.jsを使う場合
+- [Deno](https://deno.com/)を使う場合
+`faces.js`があるディレクトリで下記のように実行します。
+```sh
+deno --allow-read https://taisukef.github.io/Fa-c_e-Script/sample.deno.js sample.faces
+```
+
+- [Node.js](https://nodejs.org/)を使う場合
+リポジトリ内のJavaScriptファイル`faces.js`を同じディレクトリに置いて下記のように実行します。
 ```sh
 node sample.js sample.faces
 ```
 
-Denoを使う場合
+### 3. JavaScript内で使う (ブラウザ / Deno)
+
+```js
+import faces from "https://taisukef.github.io/Fa-c_e-Script/faces.js";
+
+faces("('O')⅃(o_o)L(-.<)");
+```
+
 ```sh
-deno  --allow-read sample.deno.js sample.faces
+deno --allow-read sample.deno.js sample1.faces
 ```
 
-### 4. JavaScriptファイルでの実行 (Node.js)
-`sample.js`を記述します。`faces.js`をモジュールとして読み込み、`sample.faces`を実行するコードです。
+### 4. JavaScript内で使う (Node.js)
 
-`sample.js`:
-```
+- package.json に { "type": "module" } と設定
+```js
 import faces from "./faces.js";
-import fs from "fs";
 
-const src = fs.readFileSync("./sample.faces", "utf-8");
-faces(src);
+faces("('O')⅃(o_o)L(-.<)");
 ```
 
-Node.jsで`sample.js`を実行します。
 ```sh
 node sample.js
-```
-
-### 5. JavaScriptファイルでの実行 (Deno)
-`sample.deno.js`を記述します。`faces.js`をモジュールとして読み込み、`sample.faces`を実行するコードです。
-
-`sample.deno.js`:
-```
-import faces from "./faces.js";
-
-const src = await Deno.readTextFile("./sample.faces");
-faces(src);
-```
-
-Denoで`sample.deno.js`を実行します。
-```sh
-deno --allow-read sample.deno.js
 ```
 
 ## 1. 値
