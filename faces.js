@@ -285,7 +285,7 @@ module.exports = (file) => {
                     } else if (commands[i].command === "variableDefine") {
                         const commandArguments = argumentOperate(i)[1];
                         argumentGetError(commandArguments, 2);
-
+    
                         for (let j = 0; j < variables.length; j++) {
                             if (commandArguments[0] === variables[j][0]) {
                                 variables[j][1] = commandArguments[1];
@@ -302,6 +302,14 @@ module.exports = (file) => {
 
                 if (commandName === "print") {
                     console.log(...commandArguments);
+                } else if (commands[i].command === "variableDefine") {
+                    argumentGetError(commandArguments, 2);
+
+                    for (let j = 0; j < variables.length; j++) {
+                        if (commandArguments[0] === variables[j][0]) {
+                            variables[j][1] = commandArguments[1];
+                        }
+                    }
                 }
             }
         }
