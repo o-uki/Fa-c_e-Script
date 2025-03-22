@@ -5,8 +5,8 @@ const isNode = typeof process !== "undefined" &&
 
 let fs, path;
 if (isNode) {
-    path = (await import("path")).module;
-    fs = (await import("fs")).module;
+    path = await import("path");
+    fs = await import("fs");
 }
 
 // Fa(c_e)Script実行関数
