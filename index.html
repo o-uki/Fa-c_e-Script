@@ -1,37 +1,64 @@
-<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><link rel="icon" href="data:">
-<title>Fa(c_e)Script Playground</title>
-</head><body>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<link rel="icon" href="data:">
+	<title>Fa(c_e)Script Playground</title>
+</head>
+<body>
 <h1>Fa(c_e)Script Playground</h1>
+<button id="runButton" class="run_button">R(u_n)</button>
 
-<textarea id=ta_src></textarea><br>
-<button id=btn_run>RUN</button><br>
-<textarea id=ta_output></textarea><br>
+<textarea id="inputArea" class="input_area"></textarea>
+<div id="outputArea" class="output_area"></div>
 
 <script type="module">
+
+// Fa(c_e)Script読み込み
 import faces from "./faces.js";
 
+// HTML取得
+const runButton = document.getElementById("runButton");
+const inputArea = document.getElementById("inputArea");
+const outputArea = document.getElementById("outputArea");
+ 
+//　デフォルトのコード
 const sample = `(°∇°)⅃(-_-)⊂(¯^¯)⊃(-_-)L(-.<)
 (°д°)⅃(o_o)(o_o)(o_o)⊂(¯^¯)⊃(o_o)(-_-)L(-.<)
 ('∇')⅃(-_-)⊂(¯^¯)⊃(^ω^)⊃('ω')⊃(-_-)⊂(¯^¯)⊃(o_o)L(-.<)
 ('O')⅃('ω')⊃(-_-)L(-.<)`;
 
-ta_src.value = sample;
+inputArea.value = sample;
 
-btn_run.onclick = () => {
-  const src = ta_src.value;
-  ta_output.value = "";
-  const outputs = [];
-  faces(src, s => outputs.push(s));
-  ta_output.value = outputs.join("\n");
-};
+runButton.addEventListener("click", () => {
+	const sourceCode = inputArea.value;
+	const outputs = [];
+
+	const exit = () => {
+		try {
+			throw "error";
+		} catch (error) {
+			console.log(error);
+		}
+	};
+	faces(sourceCode, "jsInHtml", s => outputs.push(s), exit);
+
+	outputArea.textContent = outputArea.textContent + outputs.join("\n");
+});
+
 </script>
 
 <style>
-textarea {
-  width: 95vw;
-  height: 9em;
+
+.input_area {
+	width: 95vw;
+	height: 9em;
+	resize: none;
 }
-button {
-  margin: 1em 0;
+
+.run_button {
+	margin: 1em 0;
 }
-</style>
+
+</style> 
