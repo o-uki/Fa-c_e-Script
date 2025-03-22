@@ -62,7 +62,6 @@ module.exports = (file) => {
                 }],
                 ["equal", 2, (operands) => {
                     if (operands[0] === operands[1]) {
-                        console.log("a");
                         return 1;
                     } else {
                         return 0;
@@ -249,66 +248,52 @@ module.exports = (file) => {
             }
 
             // 条件分岐と繰り返し文の処理
-            for (let i = 0; i < commands.length; i++) {
-                if (typeof commands[i] != "undefined") {
-                    if (commands[i].command === "if") { // 条件分岐
-                        const commandArguments = argumentOperate(i)[1];
+            while (!(commands.length === 0)) {
+                const commandName = commands[0].command;
+                const commandArguments = argumentOperate(0)[1];
+
+                if (typeof commands[0] != "undefined") {
+                    if (commandName === "print") {
+
+                        console.log(...commandArguments);
+
+                        commands.shift();
+                    } else if (commandName === "if") { // 条件分岐
                         argumentGetError(commandArguments, 2);
     
                         if (commandArguments[0] > 0) { // 真なら
-                            commands.splice(i, 1);
-                            i--;
+                            commands.shift();
                         } else { // 偽なら
-                            commands.splice(i, 1 + commandArguments[1]);
-                            i = i - 1 - commandArguments[1];
+                            commands.splice(0, 1 + commandArguments[1]);
                         }
-                    } else if (commands[i].command === "for") { // 繰り返し
-                        const commandArguments = argumentOperate(i)[1];
+                    } else if (commandName === "for") { // 繰り返し
                         argumentGetError(commandArguments, 2);
     
                         const loopRange = commandArguments[0];
-                        const loopCommands = commands.slice(i + 1, i + commandArguments[1] + 1);
-    
-                        commands.splice(i, 1);
+                        const loopCommands = commands.slice(1, commandArguments[1] + 1);
     
                         // 命令を繰り返して追加
-                        for (let j = 0; j < loopRange - 1; j++) {
-                            commands.splice(i + loopCommands.length * (j + 1), 0, ...structuredClone(loopCommands));
+                        for (let i = 0; i < loopRange - 1; i++) {
+                            commands.splice(loopCommands.length * (i + 1) + 1, 0, ...structuredClone(loopCommands));
                         }
     
-                        i--;
-                    } else if (commands[i].command === "variableDeclare") {
-                        const commandArguments = argumentOperate(i)[1];
+                        commands.shift();
+                    } else if (commandName === "variableDeclare") {
                         argumentGetError(commandArguments, 2);
 
                         variables.push([commandArguments[0], commandArguments[1]]);
-                    } else if (commands[i].command === "variableDefine") {
-                        const commandArguments = argumentOperate(i)[1];
+                        
+                        commands.shift();
+                    } else if (commandName === "variableDefine") {
                         argumentGetError(commandArguments, 2);
     
-                        for (let j = 0; j < variables.length; j++) {
-                            if (commandArguments[0] === variables[j][0]) {
-                                variables[j][1] = commandArguments[1];
+                        for (let i = 0; i < variables.length; i++) {
+                            if (commandArguments[0] === variables[i][0]) {
+                                variables[i][1] = commandArguments[1];
                             }
                         }
-                    }
-                }
-            }
 
-            // 順番に命令を実行
-            for (let i = 0; i < commands.length; i++) {
-                const commandName = argumentOperate(i)[0];
-                const commandArguments = argumentOperate(i)[1];
-
-                if (commandName === "print") {
-                    console.log(...commandArguments);
-                } else if (commands[i].command === "variableDefine") {
-                    argumentGetError(commandArguments, 2);
-
-                    for (let j = 0; j < variables.length; j++) {
-                        if (commandArguments[0] === variables[j][0]) {
-                            variables[j][1] = commandArguments[1];
-                        }
+                        commands.shift();
                     }
                 }
             }
