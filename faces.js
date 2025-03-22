@@ -140,7 +140,7 @@ module.exports = (file) => {
             const getError = (errorType) => {
                 for (let i = 0; i < errors.length; i++) {
                     if (errorType === errors[i][0]) {
-                        console.log('\u001b[31m' + errors[i][1]);
+                        console.log("\u001b[31m" + errors[i][1] + "\u001b[0m");
                         process.exit(1);
                     }
                 }
