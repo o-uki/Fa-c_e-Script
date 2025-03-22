@@ -62,6 +62,7 @@ module.exports = (file) => {
                 }],
                 ["equal", 2, (operands) => {
                     if (operands[0] === operands[1]) {
+                        console.log("a");
                         return 1;
                     } else {
                         return 0;
@@ -249,6 +250,7 @@ module.exports = (file) => {
 
             // 条件分岐と繰り返し文の処理
             for (let i = 0; i < commands.length; i++) {
+                console.log(commands);
                 if (typeof commands[i] != "undefined") {
                     if (commands[i].command === "if") { // 条件分岐
                         const commandArguments = argumentOperate(i)[1];
@@ -281,6 +283,15 @@ module.exports = (file) => {
                         argumentGetError(commandArguments, 2);
 
                         variables.push([commandArguments[0], commandArguments[1]]);
+                    } else if (commands[i].command === "variableDefine") {
+                        const commandArguments = argumentOperate(i)[1];
+                        argumentGetError(commandArguments, 2);
+
+                        for (let j = 0; j < variables.length; j++) {
+                            if (commandArguments[0] === variables[j][0]) {
+                                variables[j][1] = commandArguments[1];
+                            }
+                        }
                     }
                 }
             }
@@ -292,16 +303,6 @@ module.exports = (file) => {
 
                 if (commandName === "print") {
                     console.log(...commandArguments);
-                } else if (commandName === "variableDeclare") {
-                    argumentGetError(commandArguments, 2);
-                    variables.push([commandArguments[0], commandArguments[1]]);
-                } else if (commandName === "variableDefine") {
-                    argumentGetError(commandArguments, 2);
-                    for (let j = 0; j < variables.length; j++) {
-                        if (commandArguments[0] === variables[j][0]) {
-                            variables[j][1] = commandArguments[1];
-                        }
-                    }
                 }
             }
         }
