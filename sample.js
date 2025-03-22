@@ -1,3 +1,3 @@
-let faces = require("./faces");
+import faces from "./faces.js";
 
 faces("./sample.faces");

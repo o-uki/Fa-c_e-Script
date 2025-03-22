@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<link rel="icon" href="data:">
+	<title>Fa(c_e)Script Playground</title>
+</head>
+<body>
+<h1>Fa(c_e)Script Playground</h1>
+<button id="runButton" class="run_button">R(u_n)</button>
+
+<textarea id="inputArea" class="input_area"></textarea>
+<div id="outputArea" class="output_area"></div>
+
+<script type="module">
+
+// Fa(c_e)Script読み込み
+import faces from "./faces.js";
+
+// HTML取得
+const runButton = document.getElementById("runButton");
+const inputArea = document.getElementById("inputArea");
+const outputArea = document.getElementById("outputArea");
+ 
+//　デフォルトのコード
+const sample = `(°∇°)⅃(-_-)⊂(¯^¯)⊃(-_-)L(-.<)
+(°д°)⅃(o_o)(o_o)(o_o)⊂(¯^¯)⊃(o_o)(-_-)L(-.<)
+('∇')⅃(-_-)⊂(¯^¯)⊃(^ω^)⊃('ω')⊃(-_-)⊂(¯^¯)⊃(o_o)L(-.<)
+('O')⅃('ω')⊃(-_-)L(-.<)`;
+
+inputArea.value = sample;
+
+runButton.addEventListener("click", () => {
+	const sourceCode = inputArea.value;
+	const outputs = [];
+
+	const exit = () => {
+		try {
+			throw "error";
+		} catch (error) {
+			console.log(error);
+		}
+	};
+	faces(sourceCode, "jsInHtml", outputs.push, exit);
+
+	outputArea.textContent = outputArea.textContent + outputs.join("\n");
+});
+
+</script>
+
+<style>
+
+.input_area {
+	width: 95vw;
+	height: 9em;
+	resize: none;
+}
+
+.run_button {
+	margin: 1em 0;
+}
+
+</style> 
