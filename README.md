@@ -45,6 +45,7 @@ deno --allow-read sample.deno.js sample1.faces
 ### 4. JavaScript内で使う (Node.js)
 
 - package.json に { "type": "module" } と設定
+- faces.js を同じディレクトリに置く
 ```js
 import faces from "./faces.js";
 
