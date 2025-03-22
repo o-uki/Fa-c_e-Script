@@ -247,7 +247,7 @@ module.exports = (file) => {
                 }
             }
 
-            // 条件分岐と繰り返し文の処理、変数の命令はもうしてあるので削除
+            // 条件分岐と繰り返し文の処理
             for (let i = 0; i < commands.length; i++) {
                 if (typeof commands[i] != "undefined") {
                     if (commands[i].command === "if") { // 条件分岐
@@ -276,6 +276,11 @@ module.exports = (file) => {
                         }
     
                         i--;
+                    } else if (commands[i].command === "variableDeclare") {
+                        const commandArguments = argumentOperate(i)[1];
+                        argumentGetError(commandArguments, 2);
+
+                        variables.push([commandArguments[0], commandArguments[1]]);
                     }
                 }
             }
