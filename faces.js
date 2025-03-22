@@ -250,7 +250,6 @@ module.exports = (file) => {
 
             // 条件分岐と繰り返し文の処理
             for (let i = 0; i < commands.length; i++) {
-                console.log(commands);
                 if (typeof commands[i] != "undefined") {
                     if (commands[i].command === "if") { // 条件分岐
                         const commandArguments = argumentOperate(i)[1];
