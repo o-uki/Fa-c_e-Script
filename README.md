@@ -19,13 +19,13 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 
 ### 1. ブラウザで実行
 ブラウザで下記のページを開き、Fa(c_e)Scriptを記述し、「R(u_n)」ボタンを押します。
-- <a href="https://o-uki.github.io/Fa-c_e-Script/" target="_blank" rel="noopener noreferrer">Fa(c_e)Script Playground</a>
+- [Fa(c_e)Script Playground](https://o-uki.github.io/Fa-c_e-Script/)
 
 ### 2. コンソールで実行
 好きな名前のFa(c_e)Scriptファイル`<fileName>.faces`を作成します。拡張子は、`.faces`です。
 ここでは例として`sample.faces`とします。このファイルは先ほどのディレクトリ内に置きます。
 
-- <a href="https://nodejs.org/" target="_blank" rel="noopener noreferrer">Node.js</a>を使う場合
+- [Node.js](https://nodejs.org/)を使う場合
 リポジトリ内のJavaScriptファイル`faces.js`を同じディレクトリに置いて下記のように実行します。
 ```sh
 node sample.js sample.faces
