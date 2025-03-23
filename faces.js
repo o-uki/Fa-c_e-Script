@@ -1,5 +1,7 @@
 // Fa(c_e)Script実行関数
 export default (sourceCode, output = console.log) => {
+    let facesError = false;
+
     try {
         //　トークンの配列
         const tokens = [
@@ -10,6 +12,8 @@ export default (sourceCode, output = console.log) => {
             ["binaryOne", "(o_o)"],
             ["end", "L(-.<)"],
             ["separate", "⊂(¯^¯)⊃"],
+            ["bracketLeft", "(•ω•)/"],
+            ["bracketRight", "\\(•ω•)"],
             ["add", "(^ω^)⊃"],
             ["subtract", "(-ε-)⊃"],
             ["times", "(>ω<)⊃"],
@@ -130,6 +134,7 @@ export default (sourceCode, output = console.log) => {
         const getError = (errorType) => {
             for (let i = 0; i < errors.length; i++) {
                 if (errorType === errors[i][0]) {
+                    facesError = true;
                     output(errors[i][1]);
                     throw "getError";
                 }
@@ -155,21 +160,22 @@ export default (sourceCode, output = console.log) => {
                 getError("syntax");
             }
         }
-
-        // 値を数字に変換して引数として並べる
+        
+        // 値を数字に変換して演算子と引数として並べる
         let commands = [];
 
         (() => {
             let commandTemplate = {
                 command: "",
-                arguments: []
+                arguments: [],
+                nest: 0
             };
             let binaryBits = [];
             
             let commandOperators = [];
 
             for (let i = 0; i < tokenNames.length; i++) { // 命令を一つずつ引数と一緒にまとめていく
-                if (commandTemplate.command === "") {
+                if (commandTemplate.command === "" && !(tokenNames[i] === "bracketLeft" || tokenNames[i] === "bracketRight")) {
                     commandTemplate.command = tokenNames[i];
                     commands.push(structuredClone(commandTemplate));
                 } else {
@@ -187,6 +193,10 @@ export default (sourceCode, output = console.log) => {
                             if (tokenNames[i] === "end") {
                                 commandTemplate.command = "";
                             }
+                        } if (tokenNames[i] === "bracketLeft") { // 括弧
+                            commandTemplate.nest++;
+                        } if (tokenNames[i] === "bracketRight") {
+                            commandTemplate.nest--;
                         } else  { // 演算子
                             for (let j = 0; j < operators.length; j++) {
                                 if (tokenNames[i] === operators[j][0]) {
@@ -238,7 +248,19 @@ export default (sourceCode, output = console.log) => {
             }
         }
 
-        // 条件分岐と繰り返し文の処理
+        console.log(commands);
+
+        const getCommandScope = () => {
+            const commandNest = commands[0].nest;
+    
+            for (let i = 1; i < commands.length; i++) {
+                if (commands[i].nest <= commandNest) {
+                    return i;
+                }
+            }
+        }
+
+        // 命令文を一つずつ実行
         while (!(commands.length === 0)) {
             const commandName = commands[0].command;
             const commandArguments = argumentOperate(0)[1];
@@ -250,22 +272,22 @@ export default (sourceCode, output = console.log) => {
 
                     commands.shift();
                 } else if (commandName === "if") { // 条件分岐
-                    argumentGetError(commandArguments, 2);
+                    argumentGetError(commandArguments, 1);
 
                     if (commandArguments[0] > 0) { // 真なら
                         commands.shift();
                     } else { // 偽なら
-                        commands.splice(0, 1 + commandArguments[1]);
+                        commands.splice(0, getCommandScope());
                     }
                 } else if (commandName === "for") { // 繰り返し
-                    argumentGetError(commandArguments, 2);
+                    argumentGetError(commandArguments, 1);
 
                     const loopRange = commandArguments[0];
-                    const loopCommands = commands.slice(1, commandArguments[1] + 1);
+                    const commandScope = commands.slice(1, getCommandScope());
 
                     // 命令を繰り返して追加
                     for (let i = 0; i < loopRange - 1; i++) {
-                        commands.splice(loopCommands.length * (i + 1) + 1, 0, ...structuredClone(loopCommands));
+                        commands.splice(commandScope.length * (i + 1) + 1, 0, ...structuredClone(commandScope));
                     }
 
                     commands.shift();
@@ -288,5 +310,9 @@ export default (sourceCode, output = console.log) => {
                 }
             }
         }
-    } catch (error) {}
+    } catch (error) {
+        if (!(facesError)) {
+            console.error(error);
+        }
+    }
 };
