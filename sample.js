@@ -1,3 +1,5 @@
 import faces from "./faces.js";
+import fs from "fs";
 
-faces("./sample.faces");
+const sourceCode = fs.readFileSync("./sample.faces", "utf-8");
+faces(sourceCode);
