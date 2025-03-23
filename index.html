@@ -35,14 +35,6 @@ $runButton.addEventListener("click", () => {
 	const sourceCode = $inputArea.value;
 	const outputs = [];
 
-	const exit = () => {
-		try {
-			throw new Error("Error");
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
 	const output = (value) => {
 		const $outputMessage = document.createElement("p");
 		$outputMessage.textContent = value;
@@ -51,7 +43,7 @@ $runButton.addEventListener("click", () => {
 		$outputArea.appendChild($outputMessage);
 	}
 
-	faces(sourceCode, output, exit);
+	faces(sourceCode, output);
 });
 
 </script>
