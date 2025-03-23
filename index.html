@@ -42,7 +42,7 @@ runButton.addEventListener("click", () => {
 			console.log(error);
 		}
 	};
-	faces(sourceCode, "jsInHtml", outputs.push, exit);
+	faces(sourceCode, outputs.push, exit);
 
 	outputArea.textContent = outputArea.textContent + outputs.join("\n");
 });
