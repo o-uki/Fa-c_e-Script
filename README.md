@@ -14,28 +14,36 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 - [8. エラー](#8-エラー)
 
 ## 実行までの手順
-**Fa(c_e)Scriptを実行するには、Node.jsの実行環境が必要です。**
 
-### 1. ディレクトリを作成
-好きな名前でディレクトリを作成します。その中に、リポジトリ内のJavaScriptファイル`faces.js`と、
-好きな名前の空のJavaScriptファイル`<fileName>.js`、ここでは例として`sample.js`を置きます。
+**Fa(c_e)Scriptを実行するには、ブラウザ、Node.jsまたはDenoの実行環境が必要です。**
 
-### 2. Fa(c_e)Scriptファイルを作成
+### 1. ブラウザで実行
+ブラウザで下記のページを開き、Fa(c_e)Scriptを記述し、「R(u_n)」ボタンを押します。
+- [Fa(c_e)Script Playground](https://o-uki.github.io/Fa-c_e-Script/)
+
+### 2. コンソールで実行
 好きな名前のFa(c_e)Scriptファイル`<fileName>.faces`を作成します。拡張子は、`.faces`です。
 ここでは例として`sample.faces`とします。このファイルは先ほどのディレクトリ内に置きます。
 
-### 3. JavaScriptファイルを記述
-`sample.js`を記述します。`faces.js`をモジュールとして読み込み、`sample.faces`を実行するコードです。
-
-`sample.js`:
-```
-let faces = require("./faces");
-
-faces("./sample.faces");
+- [Node.js](https://nodejs.org/)を使う場合
+リポジトリ内のJavaScriptファイル`faces.js`を同じディレクトリに置いて下記のように実行します。
+```sh
+node sample.js sample.faces
 ```
 
-ここまで完了したら、Fa(c_e)Scriptを実行する準備が整いました。
-`sample.faces`内にFa(c_e)Scriptを記述して、Node.jsで`sample.js`を実行します。
+### 3. JavaScript内で使う (Node.js)
+
+- package.json に { "type": "module" } と設定
+- faces.js を同じディレクトリに置く
+```js
+import faces from "./faces.js";
+
+faces("('O')⅃(o_o)L(-.<)");
+```
+
+```sh
+node sample.js
+```
 
 ## 1. 値
 値は、`(o_o)`を1、`(-_-)`を0とする二進数で表します。
