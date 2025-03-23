@@ -1,4 +1,4 @@
-# Fa(c_e)Script v1.0.0
+# Fa(c_e)Script
 ![faces_logo](./images/faces_full_logo_background.png "faces_logo")
 
 Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコードを記述するプログラミング言語です。
