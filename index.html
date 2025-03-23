@@ -38,11 +38,11 @@ $runButton.addEventListener("click", () => {
 	const outputs = [];
 
 	const output = (value) => {
-		const $outputMessage = document.createElement("p");
-		$outputMessage.textContent = value;
-		$outputMessage.classList.add("output_message");
+		const $outputText = document.createElement("p");
+		$outputText.textContent = value;
+		$outputText.classList.add("output_text");
 
-		$outputArea.appendChild($outputMessage);
+		$outputArea.appendChild($outputText);
 	}
 
 	faces(sourceCode, output);
@@ -117,6 +117,10 @@ body {
 	color: #777;
     border-top: 2px solid #777;
     border-bottom: 2px solid #777;
+}
+
+.output_text {
+	margin: 1px 0px 1px 0px;
 }
 
 </style> 
