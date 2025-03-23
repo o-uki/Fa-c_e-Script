@@ -1,3 +1,5 @@
+// v1.0.0
+
 // Fa(c_e)Script実行関数
 export default (sourceCode, output = console.log) => {
     let facesError = false;
