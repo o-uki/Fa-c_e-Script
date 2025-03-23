@@ -129,7 +129,7 @@ export default (sourceCode, output = console.log, errorExit = process.exit) => {
     const getError = (errorType) => {
         for (let i = 0; i < errors.length; i++) {
             if (errorType === errors[i][0]) {
-                output("\u001b[31m" + errors[i][1] + "\u001b[0m");
+                output(errors[i][1]);
                 errorExit(1);
             }
         }
