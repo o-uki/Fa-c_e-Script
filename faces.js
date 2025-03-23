@@ -1,4 +1,4 @@
-// v1.0.0
+// v1.0.1
 
 // Fa(c_e)Script実行関数
 export default (sourceCode, output = console.log) => {
@@ -249,8 +249,6 @@ export default (sourceCode, output = console.log) => {
                 getError("command");
             }
         }
-
-        console.log(commands);
 
         const getCommandScope = () => {
             const commandNest = commands[0].nest;
