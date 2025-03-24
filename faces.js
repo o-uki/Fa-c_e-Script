@@ -1,17 +1,6 @@
 
 // v1.0.1
 
-const isNode = typeof process !== "undefined" &&
-               process.versions != null &&
-               process.versions.node != null &&
-               typeof Deno === "undefined";
-
-let fs, path;
-if (isNode) {
-    path = await import("path");
-    fs = await import("fs");
-}
-
 // Fa(c_e)Script実行関数
 export default (sourceCode, output = console.log) => {
     let facesError = false;

@@ -19,7 +19,7 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 
 ### 1. ブラウザで実行
 
-ブラウザで下記のページを開き、Fa(c_e)Scriptを記述し、「RUN」ボタンを押します
+ブラウザで下記のページを開き、Fa(c_e)Scriptを記述し、「R(u_n)」ボタンを押します
 - [Fa(c_e)Script Playground](https://taisukef.github.io/Fa-c_e-Script/)
 
 ### 2. コンソールで実行
@@ -30,7 +30,7 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 - [Deno](https://deno.com/)を使う場合
 `faces.js`があるディレクトリで下記のように実行します。
 ```sh
-deno --allow-read https://taisukef.github.io/Fa-c_e-Script/sample.deno.js sample.faces
+deno --allow-read https://o-uki.github.io/Fa-c_e-Script/sample.deno.js sample.faces
 ```
 
 - [Node.js](https://nodejs.org/)を使う場合
