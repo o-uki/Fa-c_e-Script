@@ -18,12 +18,20 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 **Fa(c_e)Scriptを実行するには、ブラウザ、Node.jsまたはDenoの実行環境が必要です。**
 
 ### 1. ブラウザで実行
-ブラウザで下記のページを開き、Fa(c_e)Scriptを記述し、「R(u_n)」ボタンを押します。
-- [Fa(c_e)Script Playground](https://o-uki.github.io/Fa-c_e-Script/)
+
+ブラウザで下記のページを開き、Fa(c_e)Scriptを記述し、「RUN」ボタンを押します
+- [Fa(c_e)Script Playground](https://taisukef.github.io/Fa-c_e-Script/)
 
 ### 2. コンソールで実行
+
 好きな名前のFa(c_e)Scriptファイル`<fileName>.faces`を作成します。拡張子は、`.faces`です。
 ここでは例として`sample.faces`とします。このファイルは先ほどのディレクトリ内に置きます。
+
+- [Deno](https://deno.com/)を使う場合
+`faces.js`があるディレクトリで下記のように実行します。
+```sh
+deno --allow-read https://taisukef.github.io/Fa-c_e-Script/sample.deno.js sample.faces
+```
 
 - [Node.js](https://nodejs.org/)を使う場合
 リポジトリ内のJavaScriptファイル`faces.js`を同じディレクトリに置いて下記のように実行します。
@@ -31,7 +39,19 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 node sample.js sample.faces
 ```
 
-### 3. JavaScript内で使う (Node.js)
+### 3. JavaScript内で使う (ブラウザ / Deno)
+
+```js
+import faces from "https://taisukef.github.io/Fa-c_e-Script/faces.js";
+
+faces("('O')⅃(o_o)L(-.<)");
+```
+
+```sh
+deno --allow-read sample.deno.js sample1.faces
+```
+
+### 4. JavaScript内で使う (Node.js)
 
 - package.json に { "type": "module" } と設定
 - faces.js を同じディレクトリに置く
@@ -283,8 +303,40 @@ Fa(c_e)Scriptのソースコードは、顔文字以外の数字やアルファ�
 ### 8.1. エラーコード
 エラーコードは赤色の文字で表示される顔文字です。
 
-| エラーコード | エラーの内容 |
-| :--- | :--- |
-| `(#ˋзˊ)੭` | Fa(c_e)Scriptの文法に反した記述があります。 |
-| `(;°~°)∂` | 演算子の指定に誤りがあります。 |
-| `(ˊ•ω•)৴` | 命令文の引数の指定に誤りがあります。 |
+例:
+```
+('ω')⊃(-_-)
+```
+```
+-> 変数0を表します。
+```
+
+```
+(°∇°)⅃(-_-)⊂(¯^¯)⊃(o_o)(o_o)(o_o)L(-.<)
+('O')⅃('ω')⊃(-_-)L(-.<)
+```
+```
+-> 変数0を宣言して7を代入します。
+-> 変数0、すなわち7を表示します。
+```
+
+### 7.2.　変数の再代入
+`('∇')⅃`は、変数の再代入をする命令文です。
+1つ目の引数は再代入する変数名、2つ目の引数は代入する値を指定します。
+```
+('∇')⅃ <変数名> ⊂(¯^¯)⊃ <代入する値> L(-.<)
+```
+
+例:
+```
+(°∇°)⅃(-_-)⊂(¯^¯)⊃(o_o)(o_o)(o_o)L(-.<)
+('O')⅃('ω')⊃(-_-)L(-.<)
+(°∇°)⅃(-_-)⊂(¯^¯)⊃(o_o)(o_o)L(-.<)
+('O')⅃('ω')⊃(-_-)L(-.<)
+```
+```
+-> 変数0を宣言して7を代入します。
+-> 変数0、すなわち7を表示します。
+-> 変数0に3を再代入します。
+-> 変数0、すなわち3を表示します。
+```
