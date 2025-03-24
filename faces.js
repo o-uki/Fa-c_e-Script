@@ -1,5 +1,4 @@
-
-// v1.0.1
+// v1.1.0
 
 // Fa(c_e)Script実行関数
 export default (sourceCode, output = console.log) => {
