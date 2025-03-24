@@ -10,6 +10,7 @@ export default (sourceCode, output = console.log) => {
             ["void", " "],
             ["void", "\r"],
             ["void", "\n"],
+            ["void", "\t"],
             ["binaryZero", "(-_-)"],
             ["binaryOne", "(o_o)"],
             ["end", "L(-.<)"],
