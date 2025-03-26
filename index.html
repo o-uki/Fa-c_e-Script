@@ -46,7 +46,13 @@ $runButton.addEventListener("click", () => {
 		$outputArea.appendChild($outputText);
 	}
 
-	faces(sourceCode, output);
+	const input = () => {
+		return new Promise((resolve) => {
+			resolve(window.prompt(">"));
+		})
+	}
+
+	faces(sourceCode, output, input);
 });
 
 $clearButton.addEventListener("click", () => {

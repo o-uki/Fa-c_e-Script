@@ -1,7 +1,38 @@
-// v1.1.0
+// v1.2.0
+
+const faces_isNode = 
+typeof process !== "undefined" &&
+process.versions != null &&
+process.versions.node != null &&
+typeof Deno === "undefined";
+
+let faces_readline, faces_inputFunction;
+if (faces_isNode) {
+    faces_readline = await import("readline");
+
+    faces_inputFunction = () => {
+        return new Promise((resolve) => {
+            const rl = faces_readline.createInterface({
+                input: process.stdin,
+                output: process.stdout
+            });
+    
+            rl.question("> ", (answer) => {
+                resolve(answer);
+                rl.close();
+            });
+        });
+    };
+} else {
+    faces_inputFunction = () => {
+        return new Promise((resolve) => {
+            resolve(prompt(">"));
+        })
+    };
+}
 
 // Fa(c_e)Script実行関数
-export default (sourceCode, output = console.log) => {
+export default (sourceCode, output = console.log, input = faces_inputFunction) => {
     let facesError = false;
 
     try {
@@ -31,12 +62,15 @@ export default (sourceCode, output = console.log) => {
             ["absolute", "(O∇O)⊃"],
             ["unicode", "(◕-◕)⊃"],
             ["join", "(>◡<)⊃"],
+            ["length", "(-=-)⊃"],
+            ["random", "(▓▭▒)⊃"],
             ["print", "('O')⅃"],
             ["if", "(¯^°)⅃"],
             ["for", "(°д°)⅃"],
             ["variableDeclare", "(°∇°)⅃"],
             ["variableDefine", "('∇')⅃"],
-            ["variableGet", "('ω')⊃"]
+            ["variableGet", "('ω')⊃"],
+            ["input", "(ˇoˇ)⅃"]
         ];
 
         // 変数の配列
@@ -117,6 +151,12 @@ export default (sourceCode, output = console.log) => {
                 } else {
                     return Number(joinedValue);
                 }
+            }],
+            ["length", 1, (operands) => {
+                return String(operands[0]).length;
+            }],
+            ["random", 1, (operands) => {
+                return Math.random() * operands[0];
             }],
             ["variableGet", 1, (operands) => {
                 for (let i = 0; i < variables.length; i++) {
@@ -258,59 +298,77 @@ export default (sourceCode, output = console.log) => {
                 if (commands[i].nest <= commandNest) {
                     return i;
                 }
+                if (i === commands.length - 1) {
+                    return i + 1;
+                }
             }
         }
 
         // 命令文を一つずつ実行
-        while (!(commands.length === 0)) {
-            const commandName = commands[0].command;
-            const commandArguments = argumentOperate(0)[1];
-
-            if (typeof commands[0] != "undefined") {
-                if (commandName === "print") {
-
-                    output(...commandArguments);
-
-                    commands.shift();
-                } else if (commandName === "if") { // 条件分岐
-                    argumentGetError(commandArguments, 1);
-
-                    if (commandArguments[0] > 0) { // 真なら
+        async function commandsRun() {
+            while (!(commands.length === 0)) {
+                const commandName = commands[0].command;
+                const commandArguments = argumentOperate(0)[1];
+    
+                if (typeof commands[0] != "undefined") {
+                    if (commandName === "print") {
+    
+                        output(...commandArguments);
+    
                         commands.shift();
-                    } else { // 偽なら
-                        commands.splice(0, getCommandScope());
-                    }
-                } else if (commandName === "for") { // 繰り返し
-                    argumentGetError(commandArguments, 1);
+                    } else if (commandName === "if") { // 条件分岐
+                        argumentGetError(commandArguments, 1);
 
-                    const loopRange = commandArguments[0];
-                    const commandScope = commands.slice(1, getCommandScope());
-
-                    // 命令を繰り返して追加
-                    for (let i = 0; i < loopRange - 1; i++) {
-                        commands.splice(commandScope.length * (i + 1) + 1, 0, ...structuredClone(commandScope));
-                    }
-
-                    commands.shift();
-                } else if (commandName === "variableDeclare") {
-                    argumentGetError(commandArguments, 2);
-
-                    variables.push([commandArguments[0], commandArguments[1]]);
-                    
-                    commands.shift();
-                } else if (commandName === "variableDefine") {
-                    argumentGetError(commandArguments, 2);
-
-                    for (let i = 0; i < variables.length; i++) {
-                        if (commandArguments[0] === variables[i][0]) {
-                            variables[i][1] = commandArguments[1];
+                        if (commandArguments[0] > 0) { // 真なら
+                            commands.shift();
+                        } else { // 偽なら
+                            commands.splice(0, getCommandScope());
                         }
-                    }
+                    } else if (commandName === "for") { // 繰り返し
+                        argumentGetError(commandArguments, 1);
+    
+                        const loopRange = commandArguments[0];
+                        const commandScope = commands.slice(1, getCommandScope());
+    
+                        // 命令を繰り返して追加
+                        for (let i = 0; i < loopRange - 1; i++) {
+                            commands.splice(commandScope.length * (i + 1) + 1, 0, ...structuredClone(commandScope));
+                        }
+    
+                        commands.shift();
+                    } else if (commandName === "variableDeclare") {
+                        argumentGetError(commandArguments, 2);
+    
+                        variables.push([commandArguments[0], commandArguments[1]]);
+                        
+                        commands.shift();
+                    } else if (commandName === "variableDefine") {
+                        argumentGetError(commandArguments, 2);
+    
+                        for (let i = 0; i < variables.length; i++) {
+                            if (commandArguments[0] === variables[i][0]) {
+                                variables[i][1] = commandArguments[1];
+                            }
+                        }
+    
+                        commands.shift();
+                    } else if (commandName === "input") {
+                        argumentGetError(commandArguments, 1);
 
-                    commands.shift();
+                        const inputValue = await input();
+                        if (isNaN(Number(inputValue))) {
+                            variables.push([commandArguments[0], inputValue]);
+                        } else {
+                            variables.push([commandArguments[0], Number(inputValue)]);
+                        }
+                        
+                        commands.shift();
+                    }
                 }
             }
         }
+
+        commandsRun();
     } catch (error) {
         if (!(facesError)) {
             console.error(error);
