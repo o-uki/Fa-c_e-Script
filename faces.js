@@ -64,13 +64,16 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
             ["join", "(>◡<)⊃"],
             ["length", "(-=-)⊃"],
             ["random", "(▓▭▒)⊃"],
+            ["floor", "(^o^)⊃"],
             ["print", "('O')⅃"],
             ["if", "(¯^°)⅃"],
             ["for", "(°д°)⅃"],
             ["variableDeclare", "(°∇°)⅃"],
             ["variableDefine", "('∇')⅃"],
             ["variableGet", "('ω')⊃"],
-            ["input", "(ˇoˇ)⅃"]
+            ["input", "(ˇoˇ)⅃"],
+            ["function", "(•∀•)⅃"],
+            ["functionRun", "(°-°)⅃"]
         ];
 
         // 変数の配列
@@ -158,9 +161,12 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
             ["random", 1, (operands) => {
                 return Math.random() * operands[0];
             }],
+            ["floor", 1, (operands) => {
+                return Math.floor(operands[0]);
+            }],
             ["variableGet", 1, (operands) => {
                 for (let i = 0; i < variables.length; i++) {
-                    if (operands[0] === variables[i][0]) {
+                    if (operands[0] === variables[i][0] && !(isFunction(i))) {
                         return variables[i][1];
                     }
                 }
@@ -255,33 +261,35 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
         // 演算子の処理する関数
         const argumentOperate = (i) => {
             const commandName = commands[i].command;
-            let  commandArguments = commands[i].arguments;
+            let commandArguments = commands[i].arguments;
 
-            for (let j = commandArguments.length - 1; j >= 0; j--) {
-                if (commandArguments[j].length > 1) {
-                    let operands = [];
-                    let operator = operators[commandArguments[j].slice(-2)[0]];
-
-                    if (typeof operator != "undefined") {
-                        for (let k = 0; k < operator[1]; k++) {
-                            if (typeof commandArguments[j + k] === "undefined") {
-                                getError("operator");
+            if (typeof commandArguments != "undefined") {
+                for (let j = commandArguments.length - 1; j >= 0; j--) {
+                    if (commandArguments[j].length > 1) {
+                        let operands = [];
+                        let operator = operators[commandArguments[j].slice(-2)[0]];
+    
+                        if (typeof operator != "undefined") {
+                            for (let k = 0; k < operator[1]; k++) {
+                                if (typeof commandArguments[j + k] === "undefined") {
+                                    getError("operator");
+                                }
+                                operands.push(commandArguments[j + k].slice(-1)[0]);
                             }
-                            operands.push(commandArguments[j + k].slice(-1)[0]);
+    
+                            commandArguments[j][commandArguments[j].length - 1] = operator[2](operands);
+                            commandArguments[j].splice(-2, 1);
+                            commandArguments.splice(j + 1, operator[1] - 1);
+                            j = commandArguments.length;
                         }
-
-                        commandArguments[j][commandArguments[j].length - 1] = operator[2](operands);
-                        commandArguments[j].splice(-2, 1);
-                        commandArguments.splice(j + 1, operator[1] - 1);
-                        j = commandArguments.length;
                     }
                 }
+
+                commands[i].arguments = [].concat(...commands[i].arguments);
+                commandArguments = commands[i].arguments;
+
+                return [commandName, commandArguments];
             }
-
-            commands[i].arguments = [].concat(...commands[i].arguments);
-            commandArguments = commands[i].arguments;
-
-            return [commandName, commandArguments];
         }
 
         // 引数の指定が足りなかったらエラーを吐く関数
@@ -291,6 +299,7 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
             }
         }
 
+        // スコープを取得する関数
         const getCommandScope = () => {
             const commandNest = commands[0].nest;
     
@@ -304,13 +313,18 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
             }
         }
 
+        // 変数が関数かチェックする関数
+        const isFunction = (i) => {
+            return variables[i][1] === "ƒ" && variables[i].length === 3;
+        }
+
         // 命令文を一つずつ実行
         async function commandsRun() {
             while (!(commands.length === 0)) {
-                const commandName = commands[0].command;
-                const commandArguments = argumentOperate(0)[1];
-    
-                if (typeof commands[0] != "undefined") {
+                if (typeof commands[0] != "undefined" && typeof argumentOperate(0) != "undefined") {
+                    const commandName = commands[0].command;
+                    const commandArguments = argumentOperate(0)[1];
+
                     if (commandName === "print") {
     
                         output(...commandArguments);
@@ -346,7 +360,7 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
                         argumentGetError(commandArguments, 2);
     
                         for (let i = 0; i < variables.length; i++) {
-                            if (commandArguments[0] === variables[i][0]) {
+                            if (commandArguments[0] === variables[i][0] && !(isFunction(i))) {
                                 variables[i][1] = commandArguments[1];
                             }
                         }
@@ -356,12 +370,53 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
                         argumentGetError(commandArguments, 1);
 
                         const inputValue = await input();
-                        if (isNaN(Number(inputValue))) {
-                            variables.push([commandArguments[0], inputValue]);
-                        } else {
-                            variables.push([commandArguments[0], Number(inputValue)]);
+                        let variableExist = false;
+                        for (let i = 0; i < variables.length; i++) {
+                            if (commandArguments[0] === variables[i][0]) {
+                                variableExist = true;
+
+                                if (isNaN(Number(inputValue))) {
+                                    variables[i][1] = inputValue;
+                                } else {
+                                    variables[i][1] = Number(inputValue);
+                                }
+                            }
+                        }
+
+                        if (!(variableExist)) {
+                            if (isNaN(Number(inputValue))) {
+                                variables.push([commandArguments[0], inputValue]);
+                            } else {
+                                variables.push([commandArguments[0], Number(inputValue)]);
+                            }
                         }
                         
+                        commands.shift();
+                    } else if (commandName === "function") {
+                        argumentGetError(commandArguments, 1);
+
+                        variables.push([commandArguments[0], "ƒ", structuredClone(commands.slice(1, getCommandScope()))]);
+
+                        commands.splice(0, getCommandScope());
+                    } else if (commandName === "functionRun") {
+                        argumentGetError(commandArguments, 1);
+
+                        const commandNest = commands[0].nest;
+                        let nestDifference;
+
+                        for (let i = 0; i < variables.length; i++) {
+                            if (commandArguments[0] === variables[i][0] && isFunction(i)) {
+                                let functionCommands = structuredClone(variables[i][2]);
+                                nestDifference = functionCommands[0].nest - commandNest;
+
+                                for (let j = 0; j < functionCommands.length; j++) {
+                                    functionCommands[j].nest -= nestDifference;
+
+                                    commands.splice(j + 1, 0, functionCommands[j]);
+                                }
+                            }
+                        }
+
                         commands.shift();
                     }
                 }
