@@ -1,4 +1,4 @@
-// v1.3.0
+// v1.3.1
 
 const faces_isNode = 
 typeof process !== "undefined" &&
@@ -36,6 +36,24 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
     let facesError = false;
 
     try {
+        // エラーの配列とエラーの処理をする関数
+        let errors = [
+            ["syntax", "(#ˋзˊ)੭"],
+            ["operator", "(;°~°)∂"],
+            ["command", "(ˊ•ω•)৴"],
+            ["type", "(｡'д')/"]
+        ]
+
+        const getError = (errorType) => {
+            for (let i = 0; i < errors.length; i++) {
+                if (errorType === errors[i][0]) {
+                    facesError = true;
+                    output(errors[i][1]);
+                    throw "getError";
+                }
+            }
+        }
+
         //　トークンの配列
         const tokens = [
             ["void", " "],
@@ -84,16 +102,30 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
             ["add", 2, (operands) => {
                 if (typeof operands[0] === "number" && typeof operands[1] === "number") {
                     return operands[0] + operands[1];
+                } else {
+                    getError("type");
                 }
             }],
             ["subtract", 2, (operands) => {
-                return operands[0] - operands[1];
+                if (typeof operands[0] === "number" && typeof operands[1] === "number") {
+                    return operands[0] - operands[1];
+                } else {
+                    getError("type");
+                }
             }],
             ["times", 2, (operands) => {
-                return operands[0] * operands[1];
+                if (typeof operands[0] === "number" && typeof operands[1] === "number") {
+                    return operands[0] * operands[1];
+                } else {
+                    getError("type");
+                }
             }],
             ["divided", 2, (operands) => {
-                return operands[0] / operands[1];
+                if (typeof operands[0] === "number" && typeof operands[1] === "number") {
+                    return operands[0] / operands[1];
+                } else {
+                    getError("type");
+                }
             }],
             ["equal", 2, (operands) => {
                 if (operands[0] === operands[1]) {
@@ -172,23 +204,6 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
                 }
             }]
         ];
-
-        // エラーの配列とエラーの処理をする関数
-        let errors = [
-            ["syntax", "(#ˋзˊ)੭"],
-            ["operator", "(;°~°)∂"],
-            ["command", "(ˊ•ω•)৴"]
-        ]
-
-        const getError = (errorType) => {
-            for (let i = 0; i < errors.length; i++) {
-                if (errorType === errors[i][0]) {
-                    facesError = true;
-                    output(errors[i][1]);
-                    throw "getError";
-                }
-            }
-        }
 
         // 字句解析してトークンの名前を並べる
         const tokenNames = [];
