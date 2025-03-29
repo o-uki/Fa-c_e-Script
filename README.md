@@ -13,6 +13,7 @@ Fa(c_e)Script（フェイススクリプト）は、顔文字を並べてコー�
 - [7. 繰り返し文](#7-繰り返し文)
 - [8. エラー](#8-エラー)
 - [9. 入力文](#9-その他の命令文)
+- [サンプルコード](#サンプルコード)
 
 ## 実行までの手順
 
@@ -65,6 +66,12 @@ faces("('O')⅃(o_o)L(-.<)");
 ```sh
 node sample.js
 ```
+
+### VSCode拡張機能
+[Kusanagi3477](https://github.com/Kusanagi3477)さんが作ってくれました。ありがとうございます。
+
+Fa(c_e)Scriptのシンタックスハイライト・入力補完機能が使えます。
+- [facescript_extension](https://github.com/Kusanagi3477/facescript_extension)
 
 ## 記述のルール
 Fa(c_e)Scriptのソースコードは、顔文字以外の数字やアルファベットを記述することが許されていません。
