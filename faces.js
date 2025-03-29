@@ -1,4 +1,4 @@
-// v1.3.1
+// v1.4.0
 
 const faces_isNode = 
 typeof process !== "undefined" &&
@@ -34,6 +34,7 @@ if (faces_isNode) {
 // Fa(c_e)Script実行関数
 export default (sourceCode, output = console.log, input = faces_inputFunction) => {
     let facesError = false;
+    let exit = false;
 
     try {
         // エラーの配列とエラーの処理をする関数
@@ -54,6 +55,21 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
             }
         }
 
+        // 強制終了関数
+        const runExit = () => {
+            exit = true;
+            throw "exit";
+        }
+
+        // 停止関数
+        const wait = (milliSecond) => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve();
+                }, milliSecond);
+            });
+        }
+
         //　トークンの配列
         const tokens = [
             ["void", " "],
@@ -63,7 +79,7 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
             ["binaryZero", "(-_-)"],
             ["binaryOne", "(o_o)"],
             ["end", "L(-.<)"],
-            ["separate", "⊂(¯^¯)⊃"],
+            ["and", "⊂(¯^¯)⊃"],
             ["bracketLeft", "(•ω•)/"],
             ["bracketRight", "\\(•ω•)"],
             ["add", "(^ω^)⊃"],
@@ -91,7 +107,9 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
             ["variableGet", "('ω')⊃"],
             ["input", "(ˇoˇ)⅃"],
             ["function", "(•∀•)⅃"],
-            ["functionRun", "(°-°)⅃"]
+            ["functionRun", "(°-°)⅃"],
+            ["exit", "(>Д<)⅃"],
+            ["wait", "(¯¬¯)⅃"]
         ];
 
         // 変数の配列
@@ -248,7 +266,7 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
                     } else if (tokenNames[i] === "binaryOne") {
                         binaryBits.push("1");
                     } else { // 演算子と区切りと終了を処理
-                        if (tokenNames[i] === "end" || tokenNames[i] === "separate") { // 終了、区切り
+                        if (tokenNames[i] === "end" || tokenNames[i] === "and") { // 終了、区切り
                             commands.slice(-1)[0].arguments.push(structuredClone(commandOperators.concat([Number("0b" + binaryBits.join(""))])));
 
                             binaryBits = [];
@@ -335,112 +353,130 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
 
         // 命令文を一つずつ実行
         async function commandsRun() {
-            while (!(commands.length === 0)) {
-                if (typeof commands[0] != "undefined" && typeof argumentOperate(0) != "undefined") {
-                    const commandName = commands[0].command;
-                    const commandArguments = argumentOperate(0)[1];
-
-                    if (commandName === "print") {
+            try {
+                while (!(commands.length === 0)) {
+                    if (typeof commands[0] != "undefined" && typeof argumentOperate(0) != "undefined") {
+                        const commandName = commands[0].command;
+                        const commandArguments = argumentOperate(0)[1];
     
-                        output(...commandArguments);
-    
-                        commands.shift();
-                    } else if (commandName === "if") { // 条件分岐
-                        argumentGetError(commandArguments, 1);
-
-                        if (commandArguments[0] > 0) { // 真なら
+                        if (commandName === "print") {
+        
+                            output(...commandArguments);
+        
                             commands.shift();
-                        } else { // 偽なら
-                            commands.splice(0, getCommandScope());
-                        }
-                    } else if (commandName === "for") { // 繰り返し
-                        argumentGetError(commandArguments, 1);
+                        } else if (commandName === "if") { // 条件分岐
+                            argumentGetError(commandArguments, 1);
     
-                        const loopRange = commandArguments[0];
-                        const commandScope = commands.slice(1, getCommandScope());
-    
-                        // 命令を繰り返して追加
-                        for (let i = 0; i < loopRange - 1; i++) {
-                            commands.splice(commandScope.length * (i + 1) + 1, 0, ...structuredClone(commandScope));
-                        }
-    
-                        commands.shift();
-                    } else if (commandName === "variableDeclare") {
-                        argumentGetError(commandArguments, 2);
-    
-                        variables.push([commandArguments[0], commandArguments[1]]);
-                        
-                        commands.shift();
-                    } else if (commandName === "variableDefine") {
-                        argumentGetError(commandArguments, 2);
-    
-                        for (let i = 0; i < variables.length; i++) {
-                            if (commandArguments[0] === variables[i][0] && !(isFunction(i))) {
-                                variables[i][1] = commandArguments[1];
+                            if (commandArguments[0] > 0) { // 真なら
+                                commands.shift();
+                            } else { // 偽なら
+                                commands.splice(0, getCommandScope());
                             }
-                        }
+                        } else if (commandName === "for") { // 繰り返し
+                            argumentGetError(commandArguments, 1);
+        
+                            const loopRange = commandArguments[0];
+                            const commandScope = commands.slice(1, getCommandScope());
+        
+                            // 命令を繰り返して追加
+                            for (let i = 0; i < loopRange - 1; i++) {
+                                commands.splice(commandScope.length * (i + 1) + 1, 0, ...structuredClone(commandScope));
+                            }
+        
+                            commands.shift();
+                        } else if (commandName === "variableDeclare") {
+                            argumentGetError(commandArguments, 2);
+        
+                            variables.push([commandArguments[0], commandArguments[1]]);
+                            
+                            commands.shift();
+                        } else if (commandName === "variableDefine") {
+                            argumentGetError(commandArguments, 2);
+        
+                            for (let i = 0; i < variables.length; i++) {
+                                if (commandArguments[0] === variables[i][0] && !(isFunction(i))) {
+                                    variables[i][1] = commandArguments[1];
+                                }
+                            }
+        
+                            commands.shift();
+                        } else if (commandName === "input") {
+                            argumentGetError(commandArguments, 1);
     
-                        commands.shift();
-                    } else if (commandName === "input") {
-                        argumentGetError(commandArguments, 1);
-
-                        const inputValue = await input();
-                        let variableExist = false;
-                        for (let i = 0; i < variables.length; i++) {
-                            if (commandArguments[0] === variables[i][0]) {
-                                variableExist = true;
-
+                            const inputValue = await input();
+                            let variableExist = false;
+                            for (let i = 0; i < variables.length; i++) {
+                                if (commandArguments[0] === variables[i][0]) {
+                                    variableExist = true;
+    
+                                    if (isNaN(Number(inputValue))) {
+                                        variables[i][1] = inputValue;
+                                    } else {
+                                        variables[i][1] = Number(inputValue);
+                                    }
+                                }
+                            }
+    
+                            if (!(variableExist)) {
                                 if (isNaN(Number(inputValue))) {
-                                    variables[i][1] = inputValue;
+                                    variables.push([commandArguments[0], inputValue]);
                                 } else {
-                                    variables[i][1] = Number(inputValue);
+                                    variables.push([commandArguments[0], Number(inputValue)]);
                                 }
                             }
-                        }
-
-                        if (!(variableExist)) {
-                            if (isNaN(Number(inputValue))) {
-                                variables.push([commandArguments[0], inputValue]);
-                            } else {
-                                variables.push([commandArguments[0], Number(inputValue)]);
-                            }
-                        }
-                        
-                        commands.shift();
-                    } else if (commandName === "function") {
-                        argumentGetError(commandArguments, 1);
-
-                        variables.push([commandArguments[0], "ƒ", structuredClone(commands.slice(1, getCommandScope()))]);
-
-                        commands.splice(0, getCommandScope());
-                    } else if (commandName === "functionRun") {
-                        argumentGetError(commandArguments, 1);
-
-                        const commandNest = commands[0].nest;
-                        let nestDifference;
-
-                        for (let i = 0; i < variables.length; i++) {
-                            if (commandArguments[0] === variables[i][0] && isFunction(i)) {
-                                let functionCommands = structuredClone(variables[i][2]);
-                                nestDifference = functionCommands[0].nest - commandNest;
-
-                                for (let j = 0; j < functionCommands.length; j++) {
-                                    functionCommands[j].nest -= nestDifference;
-
-                                    commands.splice(j + 1, 0, functionCommands[j]);
+                            
+                            commands.shift();
+                        } else if (commandName === "function") {
+                            argumentGetError(commandArguments, 1);
+    
+                            variables.push([commandArguments[0], "ƒ", structuredClone(commands.slice(1, getCommandScope()))]);
+    
+                            commands.splice(0, getCommandScope());
+                        } else if (commandName === "functionRun") {
+                            argumentGetError(commandArguments, 1);
+    
+                            const commandNest = commands[0].nest;
+                            let nestDifference;
+    
+                            for (let i = 0; i < variables.length; i++) {
+                                if (commandArguments[0] === variables[i][0] && isFunction(i)) {
+                                    let functionCommands = structuredClone(variables[i][2]);
+                                    nestDifference = functionCommands[0].nest - commandNest;
+    
+                                    for (let j = 0; j < functionCommands.length; j++) {
+                                        functionCommands[j].nest -= nestDifference;
+    
+                                        commands.splice(j + 1, 0, functionCommands[j]);
+                                    }
                                 }
                             }
-                        }
+    
+                            commands.shift();
+                        } else if (commandName === "exit") {
+                            argumentGetError(commandArguments, 1);
+    
+                            if (commandArguments[0] === 1) {
+                                runExit();
+                            }
+                        } else if (commandName === "wait") {
+                            argumentGetError(commandArguments, 1);
 
-                        commands.shift();
+                            await wait(commandArguments[0]);
+
+                            commands.shift();
+                        }
                     }
+                }
+            } catch (error) {
+                if (!(facesError || exit)) {
+                    console.error(error);
                 }
             }
         }
 
         commandsRun();
     } catch (error) {
-        if (!(facesError)) {
+        if (!(facesError || exit)) {
             console.error(error);
         }
     }
