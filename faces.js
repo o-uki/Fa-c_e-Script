@@ -1,4 +1,4 @@
-// v1.4.0
+// v1.4.1
 
 const faces_isNode = 
 typeof process !== "undefined" &&
