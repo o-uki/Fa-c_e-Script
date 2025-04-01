@@ -298,7 +298,7 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
 
             if (typeof commandArguments != "undefined") {
                 for (let j = commandArguments.length - 1; j >= 0; j--) {
-                    if (commandArguments[j].length > 1) {
+                    if (commandArguments[j] != "undefined" && commandArguments[j].length > 1) {
                         let operands = [];
                         let operator = operators[commandArguments[j].slice(-2)[0]];
     
