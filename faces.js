@@ -454,9 +454,11 @@ export default (sourceCode, output = console.log, input = faces_inputFunction) =
                             commands.shift();
                         } else if (commandName === "exit") {
                             argumentGetError(commandArguments, 1);
-    
-                            if (commandArguments[0] === 1) {
+
+                            if (commandArguments[0] > 0) { // 真なら
                                 runExit();
+                            } else { // 偽なら
+                                commands.shift();
                             }
                         } else if (commandName === "wait") {
                             argumentGetError(commandArguments, 1);
